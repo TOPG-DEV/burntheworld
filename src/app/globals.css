@@ -5,12 +5,12 @@
   --foreground: #171717;
 }
 
-@theme inline {
+/* @theme inline {
   --color-background: var(--background);
   --color-foreground: var(--foreground);
   --font-sans: var(--font-geist-sans);
   --font-mono: var(--font-geist-mono);
-}
+} */
 
 @media (prefers-color-scheme: dark) {
   :root {
@@ -22,5 +22,254 @@
 body {
   background: var(--background);
   color: var(--foreground);
-  font-family: Arial, Helvetica, sans-serif;
+  font-family: sans-serif;
+}
+
+.hero {
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+  background-color: #0d1a25bb;
+  padding: 20px;
+  border-radius: 15px 15px 0px 0px;
+}
+
+.infoCard {
+  display: flex;
+  font-family: system-ui, 'Segoe UI', 'Open Sans', 'Helvetica Neue', sans-serif;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+  background-color: #060e156e; /* very dark green for subtle difference */
+  border: 1px solid #1e4465 !important;
+  padding-bottom: 20px !important;
+  border-radius: 15px !important;
+  max-width: 480px;   /* limit width */
+  /* box-shadow: 0 0 20px #FFD700;  */
+  color: white;
+  z-index: 10;
+  backdrop-filter: blur(8px);
+  /* -webkit-backdrop-filter: blur(8px); */
+}
+
+.trw {
+  width: 100px;
+}
+
+.title {
+  text-align: center;
+  font-family:sans-serif;
+  font-size: x-large;
+  text-transform: uppercase;
+  font-weight: 700;
+}
+
+.titleSim{
+  font-family:sans-serif;
+  text-align: center;
+  font-size: large;
+  text-transform: uppercase;
+  font-weight: 700;
+  color: #7bff91;
+  padding: 20px;
+}
+
+.subTitle {
+  text-align: center;
+  font-weight: 400;
+}
+
+.pillHolder {
+  display: flex;
+  flex-direction: row;
+  justify-content: center;
+  align-items: center;
+  height: 100%;
+  width: 100%;
+  gap: 10px;
+  padding: 20px;
+}
+
+.red-pill-button {
+  background-color: #FFD700; /* deep red */
+  color: black;
+  font-weight: bold;
+  padding: 0.75rem 1.5rem;
+  border: none;
+  border-radius: 9999px; /* pill shape */
+  text-align: center;
+  transition: background-color 0.3s, box-shadow 0.3s, transform 0.2s;
+  width: 100%;
+  max-width: 200px;
+  margin: 1.5rem auto 0;
+}
+
+.red-pill-button:hover {
+  background-color: #a99000;
+  transform: scale(1.05);
+}
+
+.red-pill-button:disabled {
+  opacity: 0.5;
+  cursor: not-allowed;
+  box-shadow: none;
+}
+
+.red-pill-button {
+  background: linear-gradient(to bottom, #FFD700, #FFD700); /* red gradient */
+  color: black;
+  font-weight: bold;
+  padding: 12px;
+  border: none;
+  border-radius: 9999px; /* pill shape */
+  text-align: center;
+  transition: background 0.3s, box-shadow 0.3s, transform 0.2s;
+  width: 100%;
+  max-width: 200px;
+  margin: 1.5rem auto 0;
+  position: relative;
+  box-shadow: 0 4px 15px #ffd9006b, inset 0 -3px 6px rgba(0, 0, 0, 0.3);
+  font-family: monospace;
+  text-shadow: 0 1px 1px rgba(0,0,0,0.3);
+}
+
+/* Glossy highlight */
+.red-pill-button::before {
+  content: "";
+  position: absolute;
+  top: 6%;
+  left: 10%;
+  width: 80%;
+  height: 40%;
+  background: linear-gradient(to bottom, rgba(255,255,255,0.7), rgba(255,255,255,0.1));
+  border-radius: 9999px;
+  pointer-events: none;
+  z-index: 1;
+}
+
+/* Hover and active effects */
+.red-pill-button:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 6px 20px #ffd90077, inset 0 -3px 6px rgba(0, 0, 0, 0.4);
+}
+
+.red-pill-button:active {
+  transform: scale(0.97);
+  box-shadow: 0 3px 10px #ff000099, inset 0 -2px 4px rgba(0, 0, 0, 0.5);
+}
+
+/* 
+@keyframes redPulse {
+  0% { box-shadow: 0 0 10px #a99000; }
+  50% { box-shadow: 0 0 20px #FFD700; }
+  100% { box-shadow: 0 0 10px #8d7800; }
+} */
+
+.red-pill-button {
+  animation: redPulse 3s infinite;
+}
+
+.blue-pill-button {
+  background: linear-gradient(to bottom, #3ca9ff, #0044cc); /* blue gradient */
+  color: black;
+  font-weight: bold;
+  padding: 12px;
+  border: none;
+  border-radius: 9999px;
+  transition: background 0.3s, box-shadow 0.3s, transform 0.2s;
+  width: 100%;
+  max-width: 200px;
+  margin: 1.5rem auto 0;
+  position: relative;
+  box-shadow: 0 4px 15px rgba(0, 102, 255, 0.5), inset 0 -3px 6px rgba(0, 0, 0, 0.3);
+  font-family: monospace;
+  text-shadow: 0 1px 1px rgba(0,0,0,0.3);
+}
+
+.blue-pill-button:disabled {
+  opacity: 0.5;
+  cursor: not-allowed;
+  box-shadow: none;
+}
+
+
+/* Glossy highlight */
+.blue-pill-button::before {
+  content: "";
+  position: absolute;
+  top: 6%;
+  left: 10%;
+  width: 80%;
+  height: 40%;
+  background: linear-gradient(to bottom, rgba(255,255,255,0.6), rgba(255,255,255,0.05));
+  border-radius: 9999px;
+  pointer-events: none;
+  z-index: 1;
+}
+
+/* Hover and active effects */
+.blue-pill-button:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 6px 20px rgba(0, 102, 255, 0.6), inset 0 -3px 6px rgba(0, 0, 0, 0.4);
+}
+
+.blue-pill-button:active {
+  transform: scale(0.97);
+  box-shadow: 0 3px 10px rgba(0, 102, 255, 0.6), inset 0 -2px 4px rgba(0, 0, 0, 0.5);
+}
+
+
+.btw {
+  display: flex;
+  justify-content: center;
+  color: #ffcc00;
+  font-weight: 100;
+  font-size: x-large;
+}
+
+.form-group {
+  display: flex;
+  flex-direction: column;
+  gap: 1rem;
+  margin-top: 2rem;
+  width: 100%;
+  max-width: 300px;
+}
+
+.input-field {
+  padding: 0.75rem 1rem;
+  border: 1px solid #4f4f4f;
+  border-radius: 8px;
+  background-color: #0d1a25;
+  font-family: monospace;
+  outline: none;
+  transition: border-color 0.3s, box-shadow 0.3s;
+}
+
+.input-field::placeholder {
+  color: #999;
+  opacity: 0.6;
+}
+
+.input-field:focus {
+  border-color: #ffcc00;
+  /* box-shadow: 0 0 8px #ffcc00; */
+}
+
+/* globals.css (if not using Tailwind) */
+.wallet-btn {
+  font-weight: bold;
+  padding: 0.5rem 1rem;
+  border-radius: 0.375rem;
+  background-color: black;
+  color: #ffcc00;
+  border: 1px solid #ffcc00;
+  cursor: pointer;
+  transition: all 0.3s ease;
+}
+
+.wallet-btn:hover {
+  background-color: #ffcc00;
+  color: black;
 }
