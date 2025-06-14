@@ -23,7 +23,7 @@ export default function CurrencyTransfer() {
         <h3 className="text-xl font-semibold text-black dark:text-white">Access Granted</h3>
         <CardContent>
           <p className="text-zinc-600 dark:text-zinc-400 mt-2">
-            You’ve unlocked full access. Enjoy the benefits.
+            You’ve unplugged. Enjoy the burn. Welcome to The Real World.
           </p>
         </CardContent>
       </Card>
