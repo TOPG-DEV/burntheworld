@@ -3,11 +3,11 @@
 import { useState } from "react";
 import { motion } from "framer-motion";
 import { useConnection, useWallet } from "@solana/wallet-adapter-react";
-import { WalletMultiButton } from "@solana/wallet-adapter-react-ui";
 import { PublicKey, SystemProgram, Transaction } from "@solana/web3.js";
 import CurrencyTransfer from "./CurrencyTransfer";
 import MatrixRain from "../components/ui/MatrixRain";
 import CustomWalletButton from "@/components/ui/CustomWalletButton";
+import Image from "next/image";  // <-- add this
 
 export default function Home() {
   const { connection } = useConnection();
@@ -48,8 +48,12 @@ export default function Home() {
       await connection.confirmTransaction(signature, "processed");
 
       setConfirmed(true);
-    } catch (err: any) {
-      setError(err?.message || "Transaction failed");
+    } catch (err: unknown) {
+      if (err instanceof Error) {
+        setError(err.message);
+      } else {
+        setError("Transaction failed");
+      }
     } finally {
       setSending(false);
     }
@@ -70,19 +74,18 @@ export default function Home() {
           animate={{ opacity: 1 }}
           transition={{ duration: 0.8 }}
         >
-          
           <h2 className="titleSim">You chose comfort over truth.</h2>
           <p className="text-gray-300 text-center mt-2">
-            The simulation welcomes you back.<br />
+            The simulation welcomes you back.
+            <br />
             Forever trapped, forever blind. <br />
-            <span className="italic">Enjoy your cage, SLAVE..</span> 
+            <span className="italic">Enjoy your cage, SLAVE..</span>
           </p>
         </motion.div>
       ) : !confirmed ? (
         <div className="infoCard">
-
           <div className="hero">
-            <img src="/trw.png" alt="trw" className="trw"/>
+            <Image src="/trw.png" alt="trw" width={200} height={200} className="trw" />
             <motion.h1
               className="title"
               initial={{ opacity: 0, y: -20 }}
@@ -104,9 +107,7 @@ export default function Home() {
               This isn’t the inner circle. But it’s where the worthy are found. <br />
               Choose the pill — or be forgotten with the rest.
             </motion.p>
-
           </div>
-          
 
           <div className="form-group">
             <input
@@ -126,9 +127,7 @@ export default function Home() {
           </div>
 
           {!inputsValid && (
-            <p className="text-red-400 mt-2 text-sm text-center">
-              Connect to wallet to proceed.
-            </p>
+            <p className="text-red-400 mt-2 text-sm text-center">Connect to wallet to proceed.</p>
           )}
 
           <div className="mt-8">
@@ -144,11 +143,7 @@ export default function Home() {
               {sending ? "Sending to Mainframe..." : "The Real World"}
             </button>
 
-            <button
-              disabled={sending || !inputsValid}
-              className="blue-pill-button"
-              onClick={handleBluePill}
-            >
+            <button disabled={sending || !inputsValid} className="blue-pill-button" onClick={handleBluePill}>
               Remain a Slave
             </button>
           </div>
