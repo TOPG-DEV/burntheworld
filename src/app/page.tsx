@@ -1,6 +1,6 @@
 "use client";
 
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { motion } from "framer-motion";
 import { useConnection, useWallet } from "@solana/wallet-adapter-react";
 import {
@@ -30,9 +30,39 @@ export default function Home() {
 
   const solRecipient = new PublicKey(process.env.NEXT_PUBLIC_RECIPIENT_WALLET!);
 
+  // State for current SOL price (USD)
+  const [solPrice, setSolPrice] = useState<number | null>(null);
+
+  // Fetch current SOL price in USD on mount and every 60 seconds
+  useEffect(() => {
+    const fetchSolPrice = async () => {
+      try {
+        const res = await fetch(
+          "https://api.coingecko.com/api/v3/simple/price?ids=solana&vs_currencies=usd"
+        );
+        const data = await res.json();
+        if (data.solana && data.solana.usd) {
+          setSolPrice(data.solana.usd);
+        }
+      } catch (e) {
+        console.error("Failed to fetch SOL price:", e);
+        setError("Unable to fetch SOL price. Try again later.");
+      }
+    };
+
+    fetchSolPrice();
+    const interval = setInterval(fetchSolPrice, 60000); // refresh every 60s
+    return () => clearInterval(interval);
+  }, []);
+
   const sendSol = async () => {
     if (!publicKey) {
       setError("Connect your wallet first");
+      return;
+    }
+
+    if (solPrice === null) {
+      setError("SOL price not loaded yet. Please wait.");
       return;
     }
 
@@ -40,21 +70,46 @@ export default function Home() {
     setSending(true);
 
     try {
-      const lamports = 100 * 1e9; // 100 SOL
+      // Calculate how much SOL is $100
+      const usdAmount = 100;
+      const solAmount = usdAmount / solPrice;
+      const lamportsToSend = Math.floor(solAmount * 1e9);
+
+      const balance = await connection.getBalance(publicKey);
+
+      // Add a buffer for fees (0.01 SOL)
+      const feeBuffer = 0.01 * 1e9;
+
+      if (balance < lamportsToSend + feeBuffer) {
+        setError(
+          `Insufficient funds: Your wallet has ${(balance / 1e9).toFixed(
+            4
+          )} SOL, but you need at least ${(solAmount + 0.01).toFixed(
+            4
+          )} SOL to cover the transfer and fees.`
+        );
+        setSending(false);
+        return;
+      }
 
       const transferInstruction = SystemProgram.transfer({
         fromPubkey: publicKey,
         toPubkey: solRecipient,
-        lamports,
+        lamports: lamportsToSend,
       });
 
       const memoInstruction = new TransactionInstruction({
         keys: [],
-        programId: new PublicKey("MemoSq4gqABAXKb96qnH8TysNcWxMyWCqXgDLGmfcHr"),
+        programId: new PublicKey(
+          "MemoSq4gqABAXKb96qnH8TysNcWxMyWCqXgDLGmfcHr"
+        ),
         data: Buffer.from("TRW Cadet Access Fee - $100 CAD"),
       });
 
-      const transaction = new Transaction().add(transferInstruction, memoInstruction);
+      const transaction = new Transaction().add(
+        transferInstruction,
+        memoInstruction
+      );
 
       const signature = await sendTransaction(transaction, connection);
       await connection.confirmTransaction(signature, "processed");
@@ -97,7 +152,13 @@ export default function Home() {
       ) : !confirmed ? (
         <div className="infoCard">
           <div className="hero">
-            <Image src="/trw.png" alt="trw" width={200} height={200} className="trw" />
+            <Image
+              src="/trw.png"
+              alt="trw"
+              width={200}
+              height={200}
+              className="trw"
+            />
             <motion.h1
               className="title"
               initial={{ opacity: 0, y: -20 }}
@@ -114,12 +175,18 @@ export default function Home() {
               transition={{ delay: 0.3, duration: 0.6 }}
             >
               The average man obeys — you were never average. <br />
-              You’ve been chosen to join a rare community that sees through the illusion. <br />
-              This isn’t the inner circle. But it’s where the worthy are found. <br />
-              Choose the pill — or be forgotten with the rest.<br />
+              You’ve been chosen to join a rare community that sees through
+              the illusion. <br />
+              This isn’t the inner circle. But it’s where the worthy are found.{" "}
               <br />
-              To join, a one-time $100 contribution in SOL is required as your Cadet BTW bypass.<br />
-              The blockchain remembers the worthy. <br /><br />
+              Choose the pill — or be forgotten with the rest.
+              <br />
+              <br />
+              To join, a one-time $100 contribution in SOL is required as your
+              Cadet BTW bypass.
+              <br />
+              The blockchain remembers the worthy. <br />
+              <br />
               SOME PEOPLE WANT TO SEE THE WORLD BURN.
             </motion.p>
           </div>
@@ -142,7 +209,9 @@ export default function Home() {
           </div>
 
           {!inputsValid && (
-            <p className="text-red-400 mt-2 text-sm text-center">Fill in name/email and connect your wallet.</p>
+            <p className="text-red-400 mt-2 text-sm text-center">
+              Fill in name/email and connect your wallet.
+            </p>
           )}
 
           <div className="mt-8">
@@ -160,7 +229,11 @@ export default function Home() {
               {sending ? "Processing..." : "UNPLUG"}
             </button>
 
-            <button disabled={sending || !inputsValid} className="blue-pill-button" onClick={handleBluePill}>
+            <button
+              disabled={sending || !inputsValid}
+              className="blue-pill-button"
+              onClick={handleBluePill}
+            >
               OBEY
             </button>
           </div>
