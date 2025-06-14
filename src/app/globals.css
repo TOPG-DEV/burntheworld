@@ -295,3 +295,8 @@ body {
   color: #7bff91;
   font-weight: 500;
 }
+
+.hint {
+  color: grey;
+  margin-top: 5px;
+}

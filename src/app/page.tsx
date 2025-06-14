@@ -3,12 +3,17 @@
 import { useState } from "react";
 import { motion } from "framer-motion";
 import { useConnection, useWallet } from "@solana/wallet-adapter-react";
-import { PublicKey, SystemProgram, Transaction } from "@solana/web3.js";
+import {
+  PublicKey,
+  SystemProgram,
+  Transaction,
+  TransactionInstruction,
+} from "@solana/web3.js";
 import CurrencyTransfer from "./CurrencyTransfer";
 import MatrixRain from "../components/ui/MatrixRain";
 import CustomWalletButton from "@/components/ui/CustomWalletButton";
 import CountdownTimer from "../components/ui/CountdownTimer";
-import Image from "next/image";  
+import Image from "next/image";
 
 export default function Home() {
   const { connection } = useConnection();
@@ -23,7 +28,7 @@ export default function Home() {
   const [email, setEmail] = useState("");
   const inputsValid = name.trim() !== "" && email.trim() !== "";
 
-  const solRecipient = new PublicKey("5ion3SqJHxr8wZkDF3qbKgBE2QCVQtHWYTyFAJ73R6Qm");
+  const solRecipient = new PublicKey(process.env.NEXT_PUBLIC_RECIPIENT_WALLET!);
 
   const sendSol = async () => {
     if (!publicKey) {
@@ -35,15 +40,21 @@ export default function Home() {
     setSending(true);
 
     try {
-      const lamports = 100 * 1e9;
+      const lamports = 100 * 1e9; // 100 SOL
 
-      const transaction = new Transaction().add(
-        SystemProgram.transfer({
-          fromPubkey: publicKey,
-          toPubkey: solRecipient,
-          lamports,
-        })
-      );
+      const transferInstruction = SystemProgram.transfer({
+        fromPubkey: publicKey,
+        toPubkey: solRecipient,
+        lamports,
+      });
+
+      const memoInstruction = new TransactionInstruction({
+        keys: [],
+        programId: new PublicKey("MemoSq4gqABAXKb96qnH8TysNcWxMyWCqXgDLGmfcHr"),
+        data: Buffer.from("TRW Cadet Access Fee - $100 CAD"),
+      });
+
+      const transaction = new Transaction().add(transferInstruction, memoInstruction);
 
       const signature = await sendTransaction(transaction, connection);
       await connection.confirmTransaction(signature, "processed");
@@ -107,8 +118,9 @@ export default function Home() {
               This isn’t the inner circle. But it’s where the worthy are found. <br />
               Choose the pill — or be forgotten with the rest.<br />
               <br />
-              This is your final warning. <br />
-              SOME PEOPLE WANT TO SEE THE WORLD BURN
+              To join, a one-time $100 contribution in SOL is required as your Cadet access fee.<br />
+              The blockchain remembers the worthy. <br /><br />
+              SOME PEOPLE WANT TO SEE THE WORLD BURN.
             </motion.p>
           </div>
           <CountdownTimer />
@@ -130,12 +142,14 @@ export default function Home() {
           </div>
 
           {!inputsValid && (
-            <p className="text-red-400 mt-2 text-sm text-center">Connect to wallet to proceed.</p>
+            <p className="text-red-400 mt-2 text-sm text-center">Fill in name/email and connect your wallet.</p>
           )}
 
           <div className="mt-8">
             <CustomWalletButton />
           </div>
+
+          <p className="hint">Join our burn for $100 in SOL</p>
 
           <div className="pillHolder">
             <button
@@ -143,7 +157,7 @@ export default function Home() {
               className="red-pill-button"
               onClick={sendSol}
             >
-              {sending ? "Sending to Mainframe..." : "UNPLUG"}
+              {sending ? "Processing..." : "UNPLUG"}
             </button>
 
             <button disabled={sending || !inputsValid} className="blue-pill-button" onClick={handleBluePill}>
