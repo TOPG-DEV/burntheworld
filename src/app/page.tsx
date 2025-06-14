@@ -118,7 +118,7 @@ export default function Home() {
               This isn’t the inner circle. But it’s where the worthy are found. <br />
               Choose the pill — or be forgotten with the rest.<br />
               <br />
-              To join, a one-time $100 contribution in SOL is required as your Cadet access fee.<br />
+              To join, a one-time $100 contribution in SOL is required as your Cadet BTW bypass.<br />
               The blockchain remembers the worthy. <br /><br />
               SOME PEOPLE WANT TO SEE THE WORLD BURN.
             </motion.p>
