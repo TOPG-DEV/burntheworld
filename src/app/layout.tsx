@@ -13,8 +13,8 @@ const geistMono = Geist_Mono({
 });
 
 export const metadata = {
-  title: "Send SOL | Web3 Access",
-  description: "Send Solana (SOL) and unlock private access.",
+  title: "Escape the Matrix",
+  description: "Unlock the Burn.",
 };
 
 export default function RootLayout({

@@ -7,7 +7,8 @@ import { PublicKey, SystemProgram, Transaction } from "@solana/web3.js";
 import CurrencyTransfer from "./CurrencyTransfer";
 import MatrixRain from "../components/ui/MatrixRain";
 import CustomWalletButton from "@/components/ui/CustomWalletButton";
-import Image from "next/image";  // <-- add this
+import CountdownTimer from "../components/ui/CountdownTimer";
+import Image from "next/image";  
 
 export default function Home() {
   const { connection } = useConnection();
@@ -34,7 +35,7 @@ export default function Home() {
     setSending(true);
 
     try {
-      const lamports = 1 * 1e9;
+      const lamports = 100 * 1e9;
 
       const transaction = new Transaction().add(
         SystemProgram.transfer({
@@ -101,14 +102,16 @@ export default function Home() {
               animate={{ opacity: 1, y: 0 }}
               transition={{ delay: 0.3, duration: 0.6 }}
             >
-              This is your final warning. <br />
               The average man obeys — you were never average. <br />
               You’ve been chosen to join a rare community that sees through the illusion. <br />
               This isn’t the inner circle. But it’s where the worthy are found. <br />
-              Choose the pill — or be forgotten with the rest.
+              Choose the pill — or be forgotten with the rest.<br />
+              <br />
+              This is your final warning. <br />
+              SOME PEOPLE WANT TO SEE THE WORLD BURN
             </motion.p>
           </div>
-
+          <CountdownTimer />
           <div className="form-group">
             <input
               type="text"
@@ -140,11 +143,11 @@ export default function Home() {
               className="red-pill-button"
               onClick={sendSol}
             >
-              {sending ? "Sending to Mainframe..." : "The Real World"}
+              {sending ? "Sending to Mainframe..." : "UNPLUG"}
             </button>
 
             <button disabled={sending || !inputsValid} className="blue-pill-button" onClick={handleBluePill}>
-              Remain a Slave
+              OBEY
             </button>
           </div>
 
