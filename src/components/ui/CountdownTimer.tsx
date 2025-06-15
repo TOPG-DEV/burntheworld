@@ -1,44 +1,55 @@
-"use client";
+import { useState, useEffect } from "react";
 
-import { useEffect, useState } from "react";
-
-// Global countdown starts at 2025-06-14 13:30 UTC (6:30 AM PDT)
-const GLOBAL_START_TIME = new Date("2025-06-14T13:30:00Z").getTime();
-const SIX_HOURS_MS = 6 * 60 * 60 * 1000;
-
-function getRemainingTime() {
-  const now = Date.now();
-  const endTime = GLOBAL_START_TIME + SIX_HOURS_MS;
-  const timeLeft = endTime - now;
-  return timeLeft > 0 ? timeLeft : 0;
-}
-
-function formatTime(ms: number) {
-  const h = Math.floor(ms / (1000 * 60 * 60));
-  const m = Math.floor((ms % (1000 * 60 * 60)) / (1000 * 60));
-  const s = Math.floor((ms % (1000 * 60)) / 1000);
-  return `${h.toString().padStart(2, "0")}h ${m.toString().padStart(2, "0")}m ${s
-    .toString()
-    .padStart(2, "0")}s`;
-}
+const COUNTDOWN_HOURS = 12;
 
 export default function CountdownTimer() {
-  const [timeLeft, setTimeLeft] = useState(getRemainingTime());
+  const [timeLeft, setTimeLeft] = useState(COUNTDOWN_HOURS * 3600 * 1000);
+
+  // Helper to get next 3PM PST timestamp
+  function getNext3PMPST() {
+    const now = new Date();
+    const laTime = new Date(
+      now.toLocaleString("en-US", { timeZone: "America/Los_Angeles" })
+    );
+    let next3PM = new Date(laTime);
+    next3PM.setHours(15, 0, 0, 0);
+    if (laTime >= next3PM) {
+      next3PM.setDate(next3PM.getDate() + 1);
+    }
+    return next3PM.getTime();
+  }
 
   useEffect(() => {
+    const startTime = getNext3PMPST();
+
     const interval = setInterval(() => {
-      setTimeLeft(getRemainingTime());
+      const now = Date.now();
+      const elapsed = now - startTime;
+      const remaining = COUNTDOWN_HOURS * 3600 * 1000 - elapsed;
+
+      setTimeLeft(remaining > 0 ? remaining : 0);
     }, 1000);
+
     return () => clearInterval(interval);
   }, []);
 
+  if (timeLeft === 0) {
+    return (
+      <p className="text-red-400 mt-4 text-center text-xl font-mono">
+        Time's up.
+      </p>
+    );
+  }
+
+  const hours = Math.floor(timeLeft / 3600000);
+  const minutes = Math.floor((timeLeft % 3600000) / 60000);
+  const seconds = Math.floor((timeLeft % 60000) / 1000);
+
   return (
-    <div className="global-timer">
-      {timeLeft > 0 ? (
-        formatTime(timeLeft)
-      ) : (
-        <span className="expired">CURRENTLY SLEEPING</span>
-      )}
-    </div>
+    <p className="text-yellow-400 font-mono text-center text-xl mt-4 select-none">
+      {hours.toString().padStart(2, "0")}:
+      {minutes.toString().padStart(2, "0")}:
+      {seconds.toString().padStart(2, "0")}
+    </p>
   );
 }

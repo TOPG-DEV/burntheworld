@@ -103,7 +103,7 @@ export default function Home() {
         programId: new PublicKey(
           "MemoSq4gqABAXKb96qnH8TysNcWxMyWCqXgDLGmfcHr"
         ),
-        data: Buffer.from("TRW Cadet Access Fee - $100 CAD"),
+        data: Buffer.from("BTW Access"),
       });
 
       const transaction = new Transaction().add(
@@ -176,18 +176,17 @@ export default function Home() {
             >
               The average man obeys — you were never average. <br />
               You’ve been chosen to join a rare community that sees through
-              the illusion. <br />
+              the illusion. <br /><br />
               This isn’t the inner circle. But it’s where the worthy are found.{" "}
               <br />
               Choose the pill — or be forgotten with the rest.
               <br />
               <br />
-              To join, a one-time $100 contribution in SOL is required as your
-              Cadet BTW bypass.
-              <br />
+          
               The blockchain remembers the worthy. <br />
               <br />
-              SOME PEOPLE WANT TO SEE THE WORLD BURN.
+              SOME PEOPLE WANT TO SEE THE WORLD BURN.<br />
+              most will be left behind.
             </motion.p>
           </div>
           <CountdownTimer />
@@ -218,7 +217,7 @@ export default function Home() {
             <CustomWalletButton />
           </div>
 
-          <p className="hint">Join our burn for $100 in SOL</p>
+          <p className="hint">Join our burn. $100</p>
 
           <div className="pillHolder">
             <button
