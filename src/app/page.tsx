@@ -292,7 +292,7 @@ export default function Home() {
     <main className="min-h-screen bg-black flex flex-col justify-center items-center px-4 py-12 relative overflow-hidden font-mono">
       <MatrixRain />
       <div className="maintenance">
-        🚧 We're currently undergoing maintenance. You may experience some bugs or issues. Thanks for your patience and sorry for the inconvenience.🚧
+        🚧 We are currently undergoing maintenance. You may experience some bugs or issues. Thanks for your patience and sorry for the inconvenience.🚧
       </div>
 
 
