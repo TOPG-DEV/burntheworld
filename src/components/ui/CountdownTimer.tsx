@@ -11,7 +11,7 @@ export default function CountdownTimer() {
     const laTime = new Date(
       now.toLocaleString("en-US", { timeZone: "America/Los_Angeles" })
     );
-    let next3PM = new Date(laTime);
+    const next3PM = new Date(laTime);
     next3PM.setHours(15, 0, 0, 0);
     if (laTime >= next3PM) {
       next3PM.setDate(next3PM.getDate() + 1);
@@ -36,7 +36,7 @@ export default function CountdownTimer() {
   if (timeLeft === 0) {
     return (
       <p className="text-red-400 mt-4 text-center text-xl font-mono">
-        Time's up.
+        Forever stuck in the matrix.
       </p>
     );
   }

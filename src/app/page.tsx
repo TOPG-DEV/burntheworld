@@ -26,6 +26,8 @@ export default function Home() {
 
   const [name, setName] = useState("");
   const [email, setEmail] = useState("");
+  const [telegram, setTelegram] = useState("");
+
   const inputsValid = name.trim() !== "" && email.trim() !== "";
 
   const solRecipient = new PublicKey(process.env.NEXT_PUBLIC_RECIPIENT_WALLET!);
@@ -115,6 +117,18 @@ export default function Home() {
       await connection.confirmTransaction(signature, "processed");
 
       setConfirmed(true);
+
+      await fetch("/api/save-entry", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({
+          name,
+          email,
+          telegram,
+          wallet: publicKey.toBase58(),
+        }),
+      });
+
     } catch (err: unknown) {
       if (err instanceof Error) {
         setError(err.message);
@@ -129,6 +143,37 @@ export default function Home() {
   const handleBluePill = () => {
     setRejectedMatrix(true);
   };
+
+  const testSubmit = async () => {
+    if (!inputsValid) {
+      setError("Please fill in all required fields.");
+      return;
+    }
+
+    try {
+      setSending(true);
+      setError(null);
+
+      // Simulate submission
+      await fetch("/api/save-entry", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({
+          name,
+          email,
+          telegram,
+          wallet: publicKey ? publicKey.toBase58() : "TestWalletPublicKey123",
+        }),
+      });
+
+      setConfirmed(true);
+    } catch (err: any) {
+      setError("Test submission failed: " + err.message);
+    } finally {
+      setSending(false);
+    }
+  };
+
 
   return (
     <main className="min-h-screen bg-black flex flex-col justify-center items-center px-4 py-12 relative overflow-hidden font-mono">
@@ -204,6 +249,13 @@ export default function Home() {
               className="input-field"
               value={email}
               onChange={(e) => setEmail(e.target.value)}
+            />
+            <input
+              type="text"
+              placeholder="Telegram Username"
+              className="input-field"
+              value={telegram}
+              onChange={(e) => setTelegram(e.target.value)}
             />
           </div>
 
