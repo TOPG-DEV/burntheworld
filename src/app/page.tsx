@@ -144,36 +144,6 @@ export default function Home() {
     setRejectedMatrix(true);
   };
 
-  const testSubmit = async () => {
-    if (!inputsValid) {
-      setError("Please fill in all required fields.");
-      return;
-    }
-
-    try {
-      setSending(true);
-      setError(null);
-
-      // Simulate submission
-      await fetch("/api/save-entry", {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({
-          name,
-          email,
-          telegram,
-          wallet: publicKey ? publicKey.toBase58() : "TestWalletPublicKey123",
-        }),
-      });
-
-      setConfirmed(true);
-    } catch (err: any) {
-      setError("Test submission failed: " + err.message);
-    } finally {
-      setSending(false);
-    }
-  };
-
 
   return (
     <main className="min-h-screen bg-black flex flex-col justify-center items-center px-4 py-12 relative overflow-hidden font-mono">

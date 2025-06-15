@@ -25,9 +25,8 @@ export default function EntriesPage() {
         const data = await res.json();
         setEntries(data);
         setError(null);
-      } catch (error: any) {
+      } catch (error: unknown) {
         console.error("Failed to load entries:", error);
-        setError(error.message || "Failed to load entries");
         setEntries([]);
       } finally {
         setLoading(false);

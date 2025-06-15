@@ -16,7 +16,7 @@ export async function POST(req: NextRequest) {
       if (res.ok) {
         existing = await res.json();
       }
-    } catch (err) {
+    } catch (_err) {
       console.warn("No existing blob found, starting fresh.");
     }
 
