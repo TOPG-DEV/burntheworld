@@ -340,7 +340,7 @@ export default function Home() {
             a quiet strength carried by something deeper than time. <br />
             The best versions of ourselves are already here, moving unseen. <br />
             <br />
-            Don’t listen to the jokers who sell false hope; <br />
+            Dont listen to the jokers who sell false hope; <br />
             protect your own, and hold them close. <br />
             A message will come. <br />
             And the doors will close.
