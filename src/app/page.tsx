@@ -1,6 +1,6 @@
 "use client";
 
-import { useState, useEffect } from "react";
+import { useState, useEffect, useMemo } from "react";
 import { motion } from "framer-motion";
 import { useConnection, useWallet } from "@solana/wallet-adapter-react";
 import {
@@ -14,6 +14,19 @@ import MatrixRain from "../components/ui/MatrixRain";
 import CustomWalletButton from "@/components/ui/CustomWalletButton";
 import CountdownTimer from "../components/ui/CountdownTimer";
 import Image from "next/image";
+
+interface RawTransaction {
+  transaction: {
+    message: {
+      accountKeys: string[];
+      instructions: {
+        programIdIndex: number;
+        accounts: number[];
+        data: string;
+      }[];
+    };
+  };
+}
 
 export default function Home() {
   const { connection } = useConnection();
@@ -33,15 +46,14 @@ export default function Home() {
 
   const inputsValid = name.trim() !== "" && email.trim() !== "";
 
-  const solRecipient = new PublicKey(process.env.NEXT_PUBLIC_RECIPIENT_WALLET!);
+  const solRecipient = useMemo(
+    () => new PublicKey(process.env.NEXT_PUBLIC_RECIPIENT_WALLET!),
+    []
+  );
 
-  // State for current SOL price (USD)
   const [solPrice, setSolPrice] = useState<number | null>(null);
-
-  // New state: if current wallet has already sent SOL to recipient (via Helius)
   const [hasSubmitted, setHasSubmitted] = useState(false);
 
-  // Fetch current SOL price in USD on mount and every 60 seconds
   useEffect(() => {
     const fetchSolPrice = async () => {
       try {
@@ -49,7 +61,7 @@ export default function Home() {
           "https://api.coingecko.com/api/v3/simple/price?ids=solana&vs_currencies=usd"
         );
         const data = await res.json();
-        if (data.solana && data.solana.usd) {
+        if (data.solana?.usd) {
           setSolPrice(data.solana.usd);
         }
       } catch (e) {
@@ -59,18 +71,16 @@ export default function Home() {
     };
 
     fetchSolPrice();
-    const interval = setInterval(fetchSolPrice, 60000); // refresh every 60s
+    const interval = setInterval(fetchSolPrice, 60000);
     return () => clearInterval(interval);
   }, []);
 
-  // New: Check on Helius if current wallet sent SOL to recipient
   useEffect(() => {
     if (!publicKey) {
       setHasSubmitted(false);
       return;
     }
 
-    // If current wallet is the recipient, mark as submitted immediately
     if (publicKey.equals(solRecipient)) {
       setHasSubmitted(true);
       return;
@@ -82,7 +92,7 @@ export default function Home() {
       return;
     }
 
-    let isCancelled = false; // to avoid state update if component unmounts
+    let isCancelled = false;
 
     const checkSentSol = async () => {
       try {
@@ -102,18 +112,11 @@ export default function Home() {
 
         if (!res.ok) {
           const text = await res.text();
-          throw new Error(
-            `Helius RPC request failed with status ${res.status}: ${text}`
-          );
+          throw new Error(`Helius RPC failed with status ${res.status}: ${text}`);
         }
 
         const data = await res.json();
-
-        if (!data.result) {
-          throw new Error("Helius response missing result");
-        }
-
-        const txs = data.result as any[];
+        const txs = data.result as RawTransaction[];
 
         const sentToRecipient = txs.some((tx) => {
           try {
@@ -121,24 +124,14 @@ export default function Home() {
             const accountKeys = message.accountKeys;
             const instructions = message.instructions;
 
-            return instructions.some((instr: any) => {
-              // Check if the instruction is a SystemProgram transfer
-              if (
-                accountKeys[instr.programIdIndex] === SystemProgram.programId.toBase58()
-              ) {
-                // Check if the transfer instruction accounts include fromPubkey and toPubkey as expected
-                // For SystemProgram transfer, usually:
-                // accounts[0] = fromPubkey
-                // accounts[1] = toPubkey
-                if (
-                  instr.accounts.length >= 2 &&
-                  accountKeys[instr.accounts[1]] === solRecipient.toBase58() &&
-                  accountKeys[instr.accounts[0]] === publicKey.toBase58()
-                ) {
-                  return true;
-                }
-              }
-              return false;
+            return instructions.some((instr) => {
+              const programId = accountKeys[instr.programIdIndex];
+              return (
+                programId === SystemProgram.programId.toBase58() &&
+                instr.accounts.length >= 2 &&
+                accountKeys[instr.accounts[1]] === solRecipient.toBase58() &&
+                accountKeys[instr.accounts[0]] === publicKey.toBase58()
+              );
             });
           } catch {
             return false;
@@ -150,7 +143,7 @@ export default function Home() {
         }
       } catch (e) {
         if (!isCancelled) {
-          console.error("Error checking sent SOL via Helius:", e);
+          console.error("Error checking sent SOL:", e);
           setHasSubmitted(false);
         }
       }
@@ -161,7 +154,7 @@ export default function Home() {
     return () => {
       isCancelled = true;
     };
-  }, [publicKey, solRecipient]);
+  }, [publicKey]);
 
   const sendSol = async () => {
     if (!publicKey) {
@@ -178,23 +171,16 @@ export default function Home() {
     setSending(true);
 
     try {
-      // Calculate how much SOL is $100
       const usdAmount = 100;
       const solAmount = usdAmount / solPrice;
       const lamportsToSend = Math.floor(solAmount * 1e9);
 
       const balance = await connection.getBalance(publicKey);
-
-      // Add a buffer for fees (0.01 SOL)
       const feeBuffer = 0.01 * 1e9;
 
       if (balance < lamportsToSend + feeBuffer) {
         setError(
-          `Insufficient funds: Your wallet has ${(balance / 1e9).toFixed(
-            4
-          )} SOL, but you need at least ${(solAmount + 0.01).toFixed(
-            4
-          )} SOL to cover the transfer and fees.`
+          `Insufficient funds: You have ${(balance / 1e9).toFixed(4)} SOL, but need ${(solAmount + 0.01).toFixed(4)} SOL.`
         );
         setSending(false);
         return;
@@ -208,9 +194,7 @@ export default function Home() {
 
       const memoInstruction = new TransactionInstruction({
         keys: [],
-        programId: new PublicKey(
-          "MemoSq4gqABAXKb96qnH8TysNcWxMyWCqXgDLGmfcHr"
-        ),
+        programId: new PublicKey("MemoSq4gqABAXKb96qnH8TysNcWxMyWCqXgDLGmfcHr"),
         data: Buffer.from("BTW Access"),
       });
 
@@ -235,7 +219,6 @@ export default function Home() {
         }),
       });
 
-      // Update hasSubmitted to true immediately after send
       setHasSubmitted(true);
     } catch (err: unknown) {
       if (err instanceof Error) {
@@ -252,14 +235,12 @@ export default function Home() {
     setRejectedMatrix(true);
   };
 
-  // New function to submit telegram + wallet on hasSubmitted view
   const handleTelegramSubmit = async () => {
     if (!telegram.trim()) {
       setTelegramSubmitError("Please enter your Telegram username.");
       return;
     }
 
-    // Get wallet address
     const wallet = publicKey?.toBase58() ?? null;
 
     if (!wallet) {
@@ -278,14 +259,20 @@ export default function Home() {
         body: JSON.stringify({
           telegram: telegram.trim(),
           wallet,
-          name: name?.trim() ?? null,  // if you collect name
-          email: email?.trim() ?? null // if you collect email
+          name: name?.trim() ?? null,
+          email: email?.trim() ?? null,
         }),
       });
 
+      let data;
+      try {
+        data = await res.json();
+      } catch {
+        throw new Error("Unexpected server response.");
+      }
+
       if (!res.ok) {
-        const data = await res.json();
-        throw new Error(data.error || "Failed to submit Telegram username.");
+        throw new Error(data?.error || "Failed to submit Telegram username.");
       }
 
       setTelegramSubmitSuccess("Telegram username submitted successfully.");
@@ -299,9 +286,6 @@ export default function Home() {
       setTelegramSubmitLoading(false);
     }
   };
-
-
-
 
   // UI Logic for showing unplugged or form depends on hasSubmitted now
   return (
