@@ -154,7 +154,7 @@ export default function Home() {
     return () => {
       isCancelled = true;
     };
-  }, [publicKey]);
+  }, [publicKey, solRecipient]);
 
   const sendSol = async () => {
     if (!publicKey) {
