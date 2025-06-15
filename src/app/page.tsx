@@ -27,6 +27,9 @@ export default function Home() {
   const [name, setName] = useState("");
   const [email, setEmail] = useState("");
   const [telegram, setTelegram] = useState("");
+  const [telegramSubmitLoading, setTelegramSubmitLoading] = useState(false);
+  const [telegramSubmitSuccess, setTelegramSubmitSuccess] = useState<string | null>(null);
+  const [telegramSubmitError, setTelegramSubmitError] = useState<string | null>(null);
 
   const inputsValid = name.trim() !== "" && email.trim() !== "";
 
@@ -34,6 +37,9 @@ export default function Home() {
 
   // State for current SOL price (USD)
   const [solPrice, setSolPrice] = useState<number | null>(null);
+
+  // New state: if current wallet has already sent SOL to recipient (via Helius)
+  const [hasSubmitted, setHasSubmitted] = useState(false);
 
   // Fetch current SOL price in USD on mount and every 60 seconds
   useEffect(() => {
@@ -56,6 +62,106 @@ export default function Home() {
     const interval = setInterval(fetchSolPrice, 60000); // refresh every 60s
     return () => clearInterval(interval);
   }, []);
+
+  // New: Check on Helius if current wallet sent SOL to recipient
+  useEffect(() => {
+    if (!publicKey) {
+      setHasSubmitted(false);
+      return;
+    }
+
+    // If current wallet is the recipient, mark as submitted immediately
+    if (publicKey.equals(solRecipient)) {
+      setHasSubmitted(true);
+      return;
+    }
+
+    const heliusApiKey = process.env.NEXT_PUBLIC_HELIUS_API_KEY;
+    if (!heliusApiKey) {
+      console.error("HELIUS_API_KEY missing from env");
+      return;
+    }
+
+    let isCancelled = false; // to avoid state update if component unmounts
+
+    const checkSentSol = async () => {
+      try {
+        const endpoint = `https://mainnet.helius-rpc.com/?api-key=${heliusApiKey}`;
+        const body = {
+          jsonrpc: "2.0",
+          id: 1,
+          method: "getTransactionsByAddress",
+          params: [publicKey.toBase58(), { limit: 50, commitment: "confirmed" }],
+        };
+
+        const res = await fetch(endpoint, {
+          method: "POST",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify(body),
+        });
+
+        if (!res.ok) {
+          const text = await res.text();
+          throw new Error(
+            `Helius RPC request failed with status ${res.status}: ${text}`
+          );
+        }
+
+        const data = await res.json();
+
+        if (!data.result) {
+          throw new Error("Helius response missing result");
+        }
+
+        const txs = data.result as any[];
+
+        const sentToRecipient = txs.some((tx) => {
+          try {
+            const message = tx.transaction.message;
+            const accountKeys = message.accountKeys;
+            const instructions = message.instructions;
+
+            return instructions.some((instr: any) => {
+              // Check if the instruction is a SystemProgram transfer
+              if (
+                accountKeys[instr.programIdIndex] === SystemProgram.programId.toBase58()
+              ) {
+                // Check if the transfer instruction accounts include fromPubkey and toPubkey as expected
+                // For SystemProgram transfer, usually:
+                // accounts[0] = fromPubkey
+                // accounts[1] = toPubkey
+                if (
+                  instr.accounts.length >= 2 &&
+                  accountKeys[instr.accounts[1]] === solRecipient.toBase58() &&
+                  accountKeys[instr.accounts[0]] === publicKey.toBase58()
+                ) {
+                  return true;
+                }
+              }
+              return false;
+            });
+          } catch {
+            return false;
+          }
+        });
+
+        if (!isCancelled) {
+          setHasSubmitted(sentToRecipient);
+        }
+      } catch (e) {
+        if (!isCancelled) {
+          console.error("Error checking sent SOL via Helius:", e);
+          setHasSubmitted(false);
+        }
+      }
+    };
+
+    checkSentSol();
+
+    return () => {
+      isCancelled = true;
+    };
+  }, [publicKey, solRecipient]);
 
   const sendSol = async () => {
     if (!publicKey) {
@@ -129,6 +235,8 @@ export default function Home() {
         }),
       });
 
+      // Update hasSubmitted to true immediately after send
+      setHasSubmitted(true);
     } catch (err: unknown) {
       if (err instanceof Error) {
         setError(err.message);
@@ -144,10 +252,65 @@ export default function Home() {
     setRejectedMatrix(true);
   };
 
+  // New function to submit telegram + wallet on hasSubmitted view
+  const handleTelegramSubmit = async () => {
+    if (!telegram.trim()) {
+      setTelegramSubmitError("Please enter your Telegram username.");
+      return;
+    }
 
+    // Get wallet address
+    const wallet = publicKey?.toBase58() ?? null;
+
+    if (!wallet) {
+      setTelegramSubmitError("Please connect your wallet first.");
+      return;
+    }
+
+    setTelegramSubmitLoading(true);
+    setTelegramSubmitError(null);
+    setTelegramSubmitSuccess(null);
+
+    try {
+      const res = await fetch("/api/save-telegram", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({
+          telegram: telegram.trim(),
+          wallet,
+          name: name?.trim() ?? null,  // if you collect name
+          email: email?.trim() ?? null // if you collect email
+        }),
+      });
+
+      if (!res.ok) {
+        const data = await res.json();
+        throw new Error(data.error || "Failed to submit Telegram username.");
+      }
+
+      setTelegramSubmitSuccess("Telegram username submitted successfully.");
+    } catch (e) {
+      if (e instanceof Error) {
+        setTelegramSubmitError(e.message);
+      } else {
+        setTelegramSubmitError("Unknown error occurred.");
+      }
+    } finally {
+      setTelegramSubmitLoading(false);
+    }
+  };
+
+
+
+
+  // UI Logic for showing unplugged or form depends on hasSubmitted now
   return (
     <main className="min-h-screen bg-black flex flex-col justify-center items-center px-4 py-12 relative overflow-hidden font-mono">
       <MatrixRain />
+      <div className="maintenance">
+        🚧 We're currently undergoing maintenance. You may experience some bugs or issues. Thanks for your patience and sorry for the inconvenience.🚧
+      </div>
+
 
       {rejectedMatrix ? (
         <motion.div
@@ -164,7 +327,74 @@ export default function Home() {
             <span className="italic">Enjoy your cage, SLAVE..</span>
           </p>
         </motion.div>
-      ) : !confirmed ? (
+      ) : confirmed ? (
+        <div className="relative z-10 w-full max-w-xl">
+          <CurrencyTransfer />
+        </div>
+      ) : hasSubmitted ? (
+        <div className="infoCard">
+          <motion.h2
+            className="titleSim"
+            initial={{ opacity: 0, y: -10 }}
+            animate={{ opacity: 1, y: 0 }}
+            transition={{ duration: 0.6 }}
+          >
+            The world burns you wake up <br /> UNPLUGGED
+          </motion.h2>
+          <p
+            className="text-gray-300 text-center mt-2"
+            style={{ paddingLeft: "10px", paddingRight: "10px" }}
+          >
+            Most will stay stuck: <br />
+            Doomscrolling media, chasing distractions, <br />
+            Wandering through illusions crafted to keep you blind. <br />
+            <br />
+            But not you. <br />
+            You took the red pill. The blockchain remembers. <br />
+            <br />
+            Those who break free feel a calm beyond fear — <br />
+            a quiet strength carried by something deeper than time. <br />
+            The best versions of ourselves are already here, moving unseen. <br />
+            <br />
+            Don’t listen to the jokers who sell false hope; <br />
+            protect your own, and hold them close. <br />
+            A message will come. <br />
+            And the doors will close.
+          </p>
+
+          <CountdownTimer />
+
+          <div className="form-group mt-4 flex flex-col items-center">
+            <input
+              type="text"
+              placeholder="Telegram Username"
+              className="input-field mb-2"
+              value={telegram}
+              onChange={(e) => setTelegram(e.target.value)}
+              style={{ maxWidth: "300px" }}
+            />
+            <button
+              onClick={handleTelegramSubmit}
+              disabled={telegramSubmitLoading || !telegram.trim() || !publicKey}
+              className="red-pill-button"
+              style={{ width: "150px" }}
+            >
+              {telegramSubmitLoading ? "Submitting..." : "Submit Telegram"}
+            </button>
+
+            {telegramSubmitError && (
+              <p className="text-red-500 mt-2 text-sm">{telegramSubmitError}</p>
+            )}
+            {telegramSubmitSuccess && (
+              <p className="text-green-400 mt-2 text-sm">{telegramSubmitSuccess}</p>
+            )}
+          </div>
+
+          <p className="text-gray-400 text-sm mt-4 text-center italic">
+            Make sure you’re ready.
+          </p>
+        </div>
+      ) : (
         <div className="infoCard">
           <div className="hero">
             <Image
@@ -191,16 +421,17 @@ export default function Home() {
             >
               The average man obeys — you were never average. <br />
               You’ve been chosen to join a rare community that sees through
-              the illusion. <br /><br />
-              This isn’t the inner circle. But it’s where the worthy are found.{" "}
+              the illusion. <br />
               <br />
+              This isn’t the inner circle. But it’s where the worthy are
+              found. <br />
               Choose the pill — or be forgotten with the rest.
               <br />
               <br />
-          
               The blockchain remembers the worthy. <br />
               <br />
-              SOME PEOPLE WANT TO SEE THE WORLD BURN.<br />
+              SOME PEOPLE WANT TO SEE THE WORLD BURN.
+              <br />
               most will be left behind.
             </motion.p>
           </div>
@@ -260,10 +491,6 @@ export default function Home() {
           </div>
 
           {error && <p className="mt-4 text-red-500">{error}</p>}
-        </div>
-      ) : (
-        <div className="relative z-10 w-full max-w-xl">
-          <CurrencyTransfer />
         </div>
       )}
     </main>

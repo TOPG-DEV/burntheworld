@@ -1,42 +1,24 @@
-import { useState, useEffect } from "react";
+import React, { useState, useEffect, JSX } from "react";
 
-const COUNTDOWN_HOURS = 12;
+export default function CountdownToFixedEastern(): JSX.Element {
+  // June 16, 2025 2:00 AM Eastern Time = June 16, 2025 06:00 AM UTC (EDT is UTC-4)
+  const targetTimestamp = Date.UTC(2025, 5, 16, 15, 0, 0);
 
-export default function CountdownTimer() {
-  const [timeLeft, setTimeLeft] = useState(COUNTDOWN_HOURS * 3600 * 1000);
-
-  // Helper to get next 3PM PST timestamp
-  function getNext3PMPST() {
-    const now = new Date();
-    const laTime = new Date(
-      now.toLocaleString("en-US", { timeZone: "America/Los_Angeles" })
-    );
-    const next3PM = new Date(laTime);
-    next3PM.setHours(15, 0, 0, 0);
-    if (laTime >= next3PM) {
-      next3PM.setDate(next3PM.getDate() + 1);
-    }
-    return next3PM.getTime();
-  }
+  const [timeLeft, setTimeLeft] = useState<number>(targetTimestamp - Date.now());
 
   useEffect(() => {
-    const startTime = getNext3PMPST();
-
     const interval = setInterval(() => {
-      const now = Date.now();
-      const elapsed = now - startTime;
-      const remaining = COUNTDOWN_HOURS * 3600 * 1000 - elapsed;
-
-      setTimeLeft(remaining > 0 ? remaining : 0);
+      const diff = targetTimestamp - Date.now();
+      setTimeLeft(diff > 0 ? diff : 0);
     }, 1000);
 
     return () => clearInterval(interval);
-  }, []);
+  }, [targetTimestamp]);
 
-  if (timeLeft === 0) {
+  if (timeLeft <= 0) {
     return (
       <p className="text-red-400 mt-4 text-center text-xl font-mono">
-        Forever stuck in the matrix.
+        BURN COMING SOON
       </p>
     );
   }

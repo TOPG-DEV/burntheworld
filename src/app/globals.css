@@ -300,3 +300,17 @@ body {
   color: grey;
   margin-top: 5px;
 }
+
+.maintenance {
+  position: fixed;
+  display: flex;
+  justify-content: center;
+  text-align: center;
+  top: 0;
+  z-index: 100;
+  width: 100%;
+  padding: 1px;
+  font-size: small;
+  background-color: #15212a72;
+  backdrop-filter: blur(8px);
+}
