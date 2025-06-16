@@ -399,9 +399,13 @@ export default function Home() {
                 A message will come.
                 <br />
                 And the doors will close.
+                <br />
+
               </p>
 
-              <CountdownTimer onComplete={() => setShowFinalMessage(true)} />
+              <CountdownTimer onComplete={() => setShowFinalMessage(true)} /><br />
+                <p>30 more minutes for the ones who were directed wrong and have not seen this yet.</p><br />
+                <p>and the doors close</p><br />
 
               <div className="form-group mt-4 flex flex-col items-center">
                 <input
@@ -480,7 +484,7 @@ export default function Home() {
               most will be left behind.
               <br />
               <br />
-              One last chancefor the ones was swayed wrong. Good luck.
+              One last chance for the ones was directed wrong. Good luck.
             </motion.p>
           </div>
           <CountdownTimer />
