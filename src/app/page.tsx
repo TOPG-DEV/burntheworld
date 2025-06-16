@@ -481,30 +481,12 @@ export default function Home() {
               SOME PEOPLE WANT TO SEE THE WORLD BURN.
               <br />
                <br />
-                <br />
 
-              most will be left behind.
               <br />
-              <br />
-              One last chance for the ones was directed wrong. Good luck.
             </motion.p>
           </div>
           <CountdownTimer />
           <div className="form-group">
-            <input
-              type="text"
-              placeholder="Name"
-              className="input-field"
-              value={name}
-              onChange={(e) => setName(e.target.value)}
-            />
-            <input
-              type="email"
-              placeholder="Email"
-              className="input-field"
-              value={email}
-              onChange={(e) => setEmail(e.target.value)}
-            />
             <input
               type="text"
               placeholder="Telegram Username"
@@ -516,7 +498,7 @@ export default function Home() {
 
           {!inputsValid && (
             <p className="text-red-400 mt-2 text-sm text-center">
-              Fill in name/email and connect your wallet.
+              connect your wallet.
             </p>
           )}
 
@@ -524,11 +506,8 @@ export default function Home() {
             <CustomWalletButton />
           </div>
 
-          <p className="hint">Join our burn. $100</p>
-
           <div className="pillHolder">
             <button
-              disabled={!publicKey || sending || !inputsValid}
               className="red-pill-button"
               onClick={sendSol}
             >
@@ -536,7 +515,6 @@ export default function Home() {
             </button>
 
             <button
-              disabled={sending || !inputsValid}
               className="blue-pill-button"
               onClick={handleBluePill}
             >
