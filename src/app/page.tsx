@@ -271,7 +271,9 @@ export default function Home() {
             <em>See you on the other side.</em>
             <br/>
              <br/>
-            <em>Re-submit submit you telegram to verify this message</em>
+            <em className="text-gray-300 text-center mt-4 px-4">Re-submit submit you telegram to verify this message</em><br /><br />
+            <em className="text-gray-300 text-center mt-4 px-4">your wallets will recive the airdrop my students will lead.</em><br/>
+            <em className="text-gray-300 text-center mt-4 px-4">watch cloesly.</em>
              <br/>
           </p>
           <br/>
@@ -352,7 +354,7 @@ export default function Home() {
                 Losers followed the blind. My students? Safe.
                 <br />
                 <br />
-                You chose to wake up — now you’ll be rewarded.
+                You chose to wake up — now you will be rewarded.
                 <br />
                 <strong className="text-green-400">Airdrop is coming. The burn will follow.</strong>
                 <br />
@@ -404,7 +406,7 @@ export default function Home() {
               </p>
 
               <CountdownTimer onComplete={() => setShowFinalMessage(true)} /><br />
-                <p>30 more minutes for the ones who were directed wrong and have not seen this yet.</p><br />
+                <p className="text-gray-300 text-center mt-2 px-4">30 more minutes for the ones who were directed wrong and have not seen this yet.</p><br />
                 <p>and the doors close</p><br />
 
               <div className="form-group mt-4 flex flex-col items-center">
@@ -469,7 +471,7 @@ export default function Home() {
               You’ve been chosen to join a rare community that sees through
               the illusion. <br />
               <br />
-              This isn’t the inner circle. But it’s where the worthy are
+              This isn’t the inner circle. But it is where the worthy are
               found. <br />
               Choose the pill — or be forgotten with the rest.
               <br />
