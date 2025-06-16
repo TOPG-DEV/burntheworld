@@ -15,19 +15,6 @@ import CustomWalletButton from "@/components/ui/CustomWalletButton";
 import CountdownTimer from "../components/ui/CountdownTimer";
 import Image from "next/image";
 
-interface RawTransaction {
-  transaction: {
-    message: {
-      accountKeys: string[];
-      instructions: {
-        programIdIndex: number;
-        accounts: number[];
-        data: string;
-      }[];
-    };
-  };
-}
-
 export default function Home() {
   const { connection } = useConnection();
   const { publicKey, sendTransaction } = useWallet();
