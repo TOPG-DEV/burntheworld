@@ -1,7 +1,7 @@
 import { NextRequest, NextResponse } from "next/server";
 import { put } from "@vercel/blob";
 
-const BLOB_NAME = "submissions.json"; 
+const BLOB_NAME = "telegram-submissions.json"; 
 const token = process.env.BLOB_READ_WRITE_TOKEN;
 
 interface Entry {

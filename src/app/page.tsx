@@ -76,15 +76,7 @@ export default function Home() {
   }, []);
 
   useEffect(() => {
-    if (!publicKey) {
-      setHasSubmitted(false);
-      return;
-    }
-
-    if (publicKey.equals(solRecipient)) {
-      setHasSubmitted(true);
-      return;
-    }
+    if (!publicKey) return; // Wait until wallet is connected
 
     const heliusApiKey = process.env.NEXT_PUBLIC_HELIUS_API_KEY;
     if (!heliusApiKey) {
@@ -92,69 +84,53 @@ export default function Home() {
       return;
     }
 
+    const recipientAddress = solRecipient.toBase58();
+    const endpoint = `https://api.helius.xyz/v0/addresses/${recipientAddress}/transactions?api-key=${heliusApiKey}&limit=100`;
+
     let isCancelled = false;
 
-    const checkSentSol = async () => {
+    const fetchSenders = async () => {
       try {
-        const endpoint = `https://mainnet.helius-rpc.com/?api-key=${heliusApiKey}`;
-        const body = {
-          jsonrpc: "2.0",
-          id: 1,
-          method: "getTransactionsByAddress",
-          params: [publicKey.toBase58(), { limit: 50, commitment: "confirmed" }],
-        };
-
-        const res = await fetch(endpoint, {
-          method: "POST",
-          headers: { "Content-Type": "application/json" },
-          body: JSON.stringify(body),
-        });
-
+        const res = await fetch(endpoint);
         if (!res.ok) {
           const text = await res.text();
-          throw new Error(`Helius RPC failed with status ${res.status}: ${text}`);
+          throw new Error(`Helius API error: ${res.status} - ${text}`);
         }
 
         const data = await res.json();
-        const txs = data.result as RawTransaction[];
+        const solSenders = new Set<string>();
 
-        const sentToRecipient = txs.some((tx) => {
-          try {
-            const message = tx.transaction.message;
-            const accountKeys = message.accountKeys;
-            const instructions = message.instructions;
-
-            return instructions.some((instr) => {
-              const programId = accountKeys[instr.programIdIndex];
-              return (
-                programId === SystemProgram.programId.toBase58() &&
-                instr.accounts.length >= 2 &&
-                accountKeys[instr.accounts[1]] === solRecipient.toBase58() &&
-                accountKeys[instr.accounts[0]] === publicKey.toBase58()
-              );
-            });
-          } catch {
-            return false;
+        for (const tx of data) {
+          const nativeTransfers = tx.nativeTransfers || [];
+          for (const transfer of nativeTransfers) {
+            if (transfer.toUserAccount === recipientAddress) {
+              solSenders.add(transfer.fromUserAccount);
+            }
           }
-        });
+        }
+
+        console.log("[📦] Unique SOL Senders:", Array.from(solSenders));
+        const connectedWallet = publicKey.toBase58();
+        console.log("[🧠] Connected Wallet:", connectedWallet);
 
         if (!isCancelled) {
-          setHasSubmitted(sentToRecipient);
+          const submitted = solSenders.has(connectedWallet);
+          console.log("[✅] hasSubmitted status:", submitted);
+          setHasSubmitted(submitted);
         }
       } catch (e) {
-        if (!isCancelled) {
-          console.error("Error checking sent SOL:", e);
-          setHasSubmitted(false);
-        }
+        console.error("Failed to fetch transactions from Helius:", e);
+        if (!isCancelled) setHasSubmitted(false);
       }
     };
 
-    checkSentSol();
+    fetchSenders();
 
     return () => {
       isCancelled = true;
     };
-  }, [publicKey, solRecipient]);
+  }, [publicKey?.toBase58(), solRecipient]); // 👈 ensure this reruns when wallet connects
+
 
   const sendSol = async () => {
     if (!publicKey) {

@@ -28,7 +28,7 @@ export default function CountdownToFixedEastern(): JSX.Element {
   const seconds = Math.floor((timeLeft % 60000) / 1000);
 
   return (
-    <p className="text-yellow-400 font-mono text-center text-xl mt-4 select-none">
+    <p className="global-timer">
       {hours.toString().padStart(2, "0")}:
       {minutes.toString().padStart(2, "0")}:
       {seconds.toString().padStart(2, "0")}
