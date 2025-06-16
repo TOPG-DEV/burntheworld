@@ -474,7 +474,13 @@ export default function Home() {
               <br />
               SOME PEOPLE WANT TO SEE THE WORLD BURN.
               <br />
+               <br />
+                <br />
+
               most will be left behind.
+              <br />
+              <br />
+              One last chancefor the ones was swayed wrong. Good luck.
             </motion.p>
           </div>
           <CountdownTimer />
