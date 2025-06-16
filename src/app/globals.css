@@ -44,7 +44,7 @@ body {
   align-items: center;
   background-color: #060e156e; /* very dark green for subtle difference */
   border: 1px solid #1e4465 !important;
-  padding-bottom: 20px !important;
+  padding: 20px !important;
   border-radius: 15px !important;
   max-width: 480px;   /* limit width */
   /* box-shadow: 0 0 20px #FFD700;  */
@@ -315,3 +315,22 @@ body {
   background-color: #15212a72;
   backdrop-filter: blur(8px);
 }
+.link-container {
+  position: relative;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+}
+
+.link-burning {
+  position: relative;
+  display: inline-block;
+  font-size: 1.5rem;
+  color: white;
+  text-decoration: none;
+  font-weight: bold;
+  text-shadow: 0 0 5px #facc15, 0 0 10px red;
+  padding: 10px;
+  z-index: 2;
+}
+

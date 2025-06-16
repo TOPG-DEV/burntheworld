@@ -313,139 +313,10 @@ export default function Home() {
     <main className="min-h-screen bg-black flex flex-col justify-center items-center px-4 py-12 relative overflow-hidden font-mono">
       <MatrixRain />
       <div className="maintenance">
-        🚧 We are currently undergoing maintenance. You may experience some bugs or issues. Thanks for your patience and sorry for the inconvenience.🚧
+        A few have been saved. Now only my students will be saved. Welcome to The Real World.
       </div>
-
-
-      {rejectedMatrix ? (
-        <motion.div
-          className="infoCard"
-          initial={{ opacity: 0 }}
-          animate={{ opacity: 1 }}
-          transition={{ duration: 0.8 }}
-        >
-          <h2 className="titleSim">You chose comfort over truth.</h2>
-          <p className="text-gray-300 text-center mt-2">
-            The simulation welcomes you back.
-            <br />
-            Forever trapped, forever blind. <br />
-            <span className="italic">Enjoy your cage, SLAVE..</span>
-          </p>
-        </motion.div>
-      ) : confirmed ? (
-        <div className="relative z-10 w-full max-w-xl">
-          <CurrencyTransfer />
-        </div>
-      ) : hasSubmitted ? (
-        <div className="infoCard">
-          {showFinalMessage ? (
-            <>
-              <motion.h2
-                className="titleSim text-red-500"
-                initial={{ opacity: 0, y: -10 }}
-                animate={{ opacity: 1, y: 0 }}
-                transition={{ duration: 0.6 }}
-              >
-                The Matrix Collapsed.
-              </motion.h2>
-              <p className="text-gray-300 text-center mt-4 px-4">
-                The chart crashed. No burn yet. I warned you.
-                <br />
-                Losers followed the blind. My students? Safe.
-                <br />
-                <br />
-                You chose to wake up — now you will be rewarded.
-                <br />
-                <strong className="text-green-400">Airdrop is coming. The burn will follow.</strong>
-                <br />
-                <br />
-                Let the NPCs sell and stay stuck in the Matrix forever.
-                <br />
-                You chose to see. Stay ready. Watch X.
-                <br />
-                <em className="text-gray-400">See you on the other side.</em>
-              </p>
-            </>
-          ) : (
-            <>
-              <motion.h2
-                className="titleSim"
-                initial={{ opacity: 0, y: -10 }}
-                animate={{ opacity: 1, y: 0 }}
-                transition={{ duration: 0.6 }}
-              >
-                The world burns you wake up <br /> UNPLUGGED
-              </motion.h2>
-              <p className="text-gray-300 text-center mt-2 px-4">
-                Most will stay stuck: <br />
-                Doomscrolling media, chasing distractions, <br />
-                Wandering through illusions crafted to keep you blind.
-                <br />
-                <br />
-                But not you.
-                <br />
-                You took the red pill. The blockchain remembers.
-                <br />
-                <br />
-                Those who break free feel a calm beyond fear —
-                <br />
-                a quiet strength carried by something deeper than time.
-                <br />
-                The best versions of ourselves are already here, moving unseen.
-                <br />
-                <br />
-                Dont listen to the jokers who sell false hope;
-                <br />
-                protect your own, and hold them close.
-                <br />
-                A message will come.
-                <br />
-                And the doors will close.
-                <br />
-
-              </p>
-
-              <CountdownTimer onComplete={() => setShowFinalMessage(true)} /><br />
-                <p className="text-gray-300 text-center mt-2 px-4">30 more minutes for the ones who were directed wrong and have not seen this yet.</p><br />
-                <p>and the doors close</p><br />
-
-              <div className="form-group mt-4 flex flex-col items-center">
-                <input
-                  type="text"
-                  placeholder="Telegram Username"
-                  className="input-field mb-2"
-                  value={telegram}
-                  onChange={(e) => setTelegram(e.target.value)}
-                  style={{ maxWidth: "300px" }}
-                />
-                <button
-                  onClick={handleTelegramSubmit}
-                  disabled={telegramSubmitLoading || !telegram.trim() || !publicKey}
-                  className="red-pill-button"
-                  style={{ width: "150px" }}
-                >
-                  {telegramSubmitLoading ? "Submitting..." : "Submit Telegram"}
-                </button>
-
-                {telegramSubmitError && (
-                  <p className="text-red-500 mt-2 text-sm">{telegramSubmitError}</p>
-                )}
-                {telegramSubmitSuccess && (
-                  <p className="text-green-400 mt-2 text-sm">{telegramSubmitSuccess}</p>
-                )}
-              </div>
-
-              <p className="text-gray-400 text-sm mt-4 text-center italic">
-                Make sure you’re ready.
-              </p>
-            </>
-          )}
-        </div>
-
-      ) : (
-        <div className="infoCard">
-          <div className="hero">
-            <Image
+            <div className="infoCard">
+              <Image
               src="/trw.png"
               alt="trw"
               width={200}
@@ -458,73 +329,26 @@ export default function Home() {
               animate={{ opacity: 1, y: 0 }}
               transition={{ duration: 0.8 }}
             >
-              JOIN THE REAL WORLD
+             <br />
+             <div className="link-container">
+                <a
+                  href="https://www.jointherealworld.com/"
+                  className="link-burning"
+                  target="_blank"
+                  rel="noopener noreferrer"
+                >
+                  www.jointherealworld.com
+                  <span className="fire"></span>
+                  <span className="fire"></span>
+                  <span className="fire"></span>
+                </a>
+              </div>
+
+
+
+              
             </motion.h1>
-
-            <motion.p
-              className="subTitle"
-              initial={{ opacity: 0, y: 10 }}
-              animate={{ opacity: 1, y: 0 }}
-              transition={{ delay: 0.3, duration: 0.6 }}
-            >
-              The average man obeys — you were never average. <br />
-              You’ve been chosen to join a rare community that sees through
-              the illusion. <br />
-              <br />
-              This isn’t the inner circle. But it is where the worthy are
-              found. <br />
-              Choose the pill — or be forgotten with the rest.
-              <br />
-              <br />
-              The blockchain remembers the worthy. <br />
-              <br />
-              SOME PEOPLE WANT TO SEE THE WORLD BURN.
-              <br />
-               <br />
-
-              <br />
-            </motion.p>
-          </div>
-          <CountdownTimer />
-          <div className="form-group">
-            <input
-              type="text"
-              placeholder="Telegram Username"
-              className="input-field"
-              value={telegram}
-              onChange={(e) => setTelegram(e.target.value)}
-            />
-          </div>
-
-          {!inputsValid && (
-            <p className="text-red-400 mt-2 text-sm text-center">
-              connect your wallet.
-            </p>
-          )}
-
-          <div className="mt-8">
-            <CustomWalletButton />
-          </div>
-
-          <div className="pillHolder">
-            <button
-              className="red-pill-button"
-              onClick={sendSol}
-            >
-              {sending ? "Processing..." : "UNPLUG"}
-            </button>
-
-            <button
-              className="blue-pill-button"
-              onClick={handleBluePill}
-            >
-              OBEY
-            </button>
-          </div>
-
-          {error && <p className="mt-4 text-red-500">{error}</p>}
-        </div>
-      )}
+            </div>
     </main>
   );
 }
