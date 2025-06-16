@@ -251,7 +251,7 @@ export default function Home() {
     }
   };
 
-  if (showFinalMessage) {
+  if (showFinalMessage && hasSubmitted) {
   return (
     <>
       <MatrixRain />
