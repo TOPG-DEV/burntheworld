@@ -485,8 +485,7 @@ export default function Home() {
 
               most will be left behind.
               <br />
-              <br />
-              One last chance for the ones was directed wrong. Good luck.
+
             </motion.p>
           </div>
           <CountdownTimer />
