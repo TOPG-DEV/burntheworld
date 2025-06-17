@@ -251,8 +251,7 @@ export default function Home() {
     }
   };
 
-  if (showFinalMessage && hasSubmitted) {
-  return (
+  {showFinalMessage && hasSubmitted && (
     <>
       <MatrixRain />
       <main className="bg-black text-white p-8 flex justify-center items-center min-h-screen font-mono text-center">
@@ -270,7 +269,7 @@ export default function Home() {
             <br />
             <em>See you on the other side.</em>
             <br/>
-             <br/>
+            <br/>
             <em className="text-gray-300 text-center mt-4 px-4">Re-submit submit your telegram to verify this message</em><br /><br />
             <em className="text-gray-300 text-center mt-4 px-4">your wallets will recive the airdrop my students will lead.</em><br/>
             <em className="text-gray-300 text-center mt-4 px-4">watch cloesly.</em>
@@ -278,34 +277,44 @@ export default function Home() {
           </p>
           <br/>
           <input
-                  type="text"
-                  placeholder="Telegram Username"
-                  className="input-field mb-2"
-                  value={telegram}
-                  onChange={(e) => setTelegram(e.target.value)}
-                  style={{ maxWidth: "300px" }}
-                />
-                <button
-                  onClick={handleTelegramSubmit}
-                  disabled={telegramSubmitLoading || !telegram.trim() || !publicKey}
-                  className="red-pill-button"
-                  style={{ width: "150px" }}
-                >
-                  {telegramSubmitLoading ? "Submitting..." : "Submit Telegram"}
-                </button>
+            type="text"
+            placeholder="Telegram Username"
+            className="input-field mb-2"
+            value={telegram}
+            onChange={(e) => setTelegram(e.target.value)}
+            style={{ maxWidth: "300px" }}
+          />
+          <button
+            onClick={handleTelegramSubmit}
+            disabled={telegramSubmitLoading || !telegram.trim() || !publicKey}
+            className="red-pill-button"
+            style={{ width: "150px" }}
+          >
+            {telegramSubmitLoading ? "Submitting..." : "Submit Telegram"}
+          </button>
 
-                {telegramSubmitError && (
-                  <p className="text-red-500 mt-2 text-sm">{telegramSubmitError}</p>
-                )}
-                {telegramSubmitSuccess && (
-                  <p className="text-green-400 mt-2 text-sm">{telegramSubmitSuccess}</p>
-                )}
+          {telegramSubmitError && (
+            <p className="text-red-500 mt-2 text-sm">{telegramSubmitError}</p>
+          )}
+          {telegramSubmitSuccess && (
+            <p className="text-green-400 mt-2 text-sm">{telegramSubmitSuccess}</p>
+          )}
+
+          {/* New Join Telegram Button */}
+          <a
+            href="https://t.me/+wd0kc17OvDMwMWUx"
+            target="_blank"
+            rel="noopener noreferrer"
+            className="red-pill-button mt-6 inline-block"
+            style={{ width: "150px", textDecoration: "none", textAlign: "center" }}
+          >
+            Join the Fire 🔥
+          </a>
         </div>
-        
       </main>
     </>
-  );
-}
+  )}
+
 
 
   // UI Logic for showing unplugged or form depends on hasSubmitted now
@@ -337,35 +346,46 @@ export default function Home() {
           <CurrencyTransfer />
         </div>
       ) : hasSubmitted ? (
-        <div className="infoCard">
-          {showFinalMessage ? (
-            <>
-              <motion.h2
-                className="titleSim text-red-500"
-                initial={{ opacity: 0, y: -10 }}
-                animate={{ opacity: 1, y: 0 }}
-                transition={{ duration: 0.6 }}
-              >
-                The Matrix Collapsed.
-              </motion.h2>
-              <p className="text-gray-300 text-center mt-4 px-4">
-                The chart crashed. No burn yet. I warned you.
-                <br />
-                Losers followed the blind. My students? Safe.
-                <br />
-                <br />
-                You chose to wake up — now you will be rewarded.
-                <br />
-                <strong className="text-green-400">Airdrop is coming. The burn will follow.</strong>
-                <br />
-                <br />
-                Let the NPCs sell and stay stuck in the Matrix forever.
-                <br />
-                You chose to see. Stay ready. Watch X.
-                <br />
-                <em className="text-gray-400">See you on the other side.</em>
-              </p>
-            </>
+          <div className="infoCard">
+            {showFinalMessage ? (
+              <>
+                <motion.h2
+                  className="titleSim text-red-500"
+                  initial={{ opacity: 0, y: -10 }}
+                  animate={{ opacity: 1, y: 0 }}
+                  transition={{ duration: 0.6 }}
+                >
+                  The Matrix Collapsed.
+                </motion.h2>
+                <p className="text-gray-300 text-center mt-4 px-4">
+                  The chart crashed. No burn yet. I warned you.
+                  <br />
+                  Losers followed the blind. My students? Safe.
+                  <br />
+                  <br />
+                  You chose to wake up — now you will be rewarded.
+                  <br />
+                  <strong className="text-green-400">Airdrop is coming. The burn will follow.</strong>
+                  <br />
+                  <br />
+                  Let the NPCs sell and stay stuck in the Matrix forever.
+                  <br />
+                  You chose to see. Stay ready. Watch X.
+                  <br />
+                  <em className="text-gray-400">See you on the other side.</em>
+                </p>
+
+                {/* Join Telegram button */}
+                <a
+                  href="https://t.me/+wd0kc17OvDMwMWUx"
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  className="red-pill-button mt-6 inline-block"
+                  style={{ width: "150px", textDecoration: "none", textAlign: "center" }}
+                >
+                  Join the FIRE
+                </a>
+              </>
           ) : (
             <>
               <motion.h2

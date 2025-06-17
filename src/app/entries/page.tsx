@@ -16,17 +16,12 @@ export default function EntriesPage() {
   const [error, setError] = useState<string | null>(null);
   const [lastUpdated, setLastUpdated] = useState<Date | null>(null);
 
-  // UseCallback to avoid recreating function on each render
   const loadEntries = useCallback(async () => {
     setLoading(true);
     try {
-      const res = await fetch(
-        `https://bvdhhtbacf4qrghy.public.blob.vercel-storage.com/submissions.json?ts=${Date.now()}`,
-        { cache: "no-store" }
-      );
-      if (!res.ok) {
-        throw new Error(`HTTP error! status: ${res.status}`);
-      }
+      const res = await fetch("/api/get-submissions", { cache: "no-store" });
+
+      if (!res.ok) throw new Error(`HTTP error! status: ${res.status}`);
       const data = await res.json();
       setEntries(data);
       setError(null);
@@ -42,8 +37,6 @@ export default function EntriesPage() {
 
   useEffect(() => {
     loadEntries(); // initial load
-
-    // Refresh every 60 seconds
     const interval = setInterval(loadEntries, 60000);
     return () => clearInterval(interval);
   }, [loadEntries]);
@@ -51,6 +44,7 @@ export default function EntriesPage() {
   return (
     <div className="p-8 text-white">
       <h1 className="text-2xl mb-4">Matrix Submissions</h1>
+
       <div className="mb-4 flex items-center space-x-4">
         <button
           onClick={loadEntries}
@@ -67,7 +61,6 @@ export default function EntriesPage() {
       </div>
 
       {error && <p className="mb-4 text-red-500">{error}</p>}
-
       {!loading && entries.length === 0 && (
         <p className="p-8 text-white">No entries found.</p>
       )}
