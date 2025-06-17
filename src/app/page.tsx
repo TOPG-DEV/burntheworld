@@ -63,7 +63,10 @@ export default function Home() {
     return () => clearInterval(interval);
   }, []);
 
+  const walletAddress = useMemo(() => publicKey?.toBase58() ?? null, [publicKey]);
+
   useEffect(() => {
+    if (!walletAddress) return;
     if (!publicKey) return; // Wait until wallet is connected
 
     const heliusApiKey = process.env.NEXT_PUBLIC_HELIUS_API_KEY;
@@ -250,70 +253,6 @@ export default function Home() {
       setTelegramSubmitLoading(false);
     }
   };
-
-  {showFinalMessage && hasSubmitted && (
-    <>
-      <MatrixRain />
-      <main className="bg-black text-white p-8 flex justify-center items-center min-h-screen font-mono text-center">
-        <div className="infoCard max-w-xl">
-          <h1 className="text-red-500 text-2xl mb-4">The Matrix Collapsed.</h1>
-          <p>
-            The chart crashed. No burn yet. I warned you.
-            <br />
-            Losers followed the blind. My students? Safe. <br /><br />
-            You chose to wake up — now you will be rewarded. <br />
-            <strong>Airdrop is coming. The burn will follow.</strong> <br />
-            <br />
-            Let the NPCs sell and stay stuck in the Matrix forever. <br />
-            You chose to see. Stay ready. Watch X.
-            <br />
-            <em>See you on the other side.</em>
-            <br/>
-            <br/>
-            <em className="text-gray-300 text-center mt-4 px-4">Re-submit submit your telegram to verify this message</em><br /><br />
-            <em className="text-gray-300 text-center mt-4 px-4">your wallets will recive the airdrop my students will lead.</em><br/>
-            <em className="text-gray-300 text-center mt-4 px-4">watch cloesly.</em>
-            <br/>
-          </p>
-          <br/>
-          <input
-            type="text"
-            placeholder="Telegram Username"
-            className="input-field mb-2"
-            value={telegram}
-            onChange={(e) => setTelegram(e.target.value)}
-            style={{ maxWidth: "300px" }}
-          />
-          <button
-            onClick={handleTelegramSubmit}
-            disabled={telegramSubmitLoading || !telegram.trim() || !publicKey}
-            className="red-pill-button"
-            style={{ width: "150px" }}
-          >
-            {telegramSubmitLoading ? "Submitting..." : "Submit Telegram"}
-          </button>
-
-          {telegramSubmitError && (
-            <p className="text-red-500 mt-2 text-sm">{telegramSubmitError}</p>
-          )}
-          {telegramSubmitSuccess && (
-            <p className="text-green-400 mt-2 text-sm">{telegramSubmitSuccess}</p>
-          )}
-
-          {/* New Join Telegram Button */}
-          <a
-            href="https://t.me/+wd0kc17OvDMwMWUx"
-            target="_blank"
-            rel="noopener noreferrer"
-            className="red-pill-button mt-6 inline-block"
-            style={{ width: "150px", textDecoration: "none", textAlign: "center" }}
-          >
-            Join the Fire 🔥
-          </a>
-        </div>
-      </main>
-    </>
-  )}
 
 
 
