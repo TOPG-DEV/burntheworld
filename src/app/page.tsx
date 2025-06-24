@@ -261,7 +261,7 @@ export default function Home() {
     <main className="min-h-screen bg-black flex flex-col justify-center items-center px-4 py-12 relative overflow-hidden font-mono">
       <MatrixRain />
       <div className="maintenance">
-        My students are saved, you have been chosen to take the pill
+        The Matrix is watching — only the worthy unplug. Choose the pill or be forgotten.
       </div>
 
 
@@ -297,22 +297,23 @@ export default function Home() {
                   The Matrix Collapsed.
                 </motion.h2>
                 <p className="text-gray-300 text-center mt-4 px-4">
-                  The chart crashed. No burn yet. I warned you.
+                  The chart fell. No burn yet — You were warned.
                   <br />
-                  Losers followed the blind. My students? Safe.
-                  <br />
-                  <br />
-                  You chose to wake up — now you will be rewarded.
-                  <br />
-                  <strong className="text-green-400">Airdrop is coming. The burn will follow.</strong>
+                  The blind followed noise. You followed truth.
                   <br />
                   <br />
-                  Let the NPCs sell and stay stuck in the Matrix forever.
+                  You chose the pill. You stayed awake.
                   <br />
-                  You chose to see. Stay ready. Watch X.
+                  <strong className="text-red-400">The airdrop is coming. The burn will follow.</strong>
                   <br />
-                  <em className="text-gray-400">See you on the other side.</em>
+                  <br />
+                  Let the NPCs scroll and sell. Stay focused.
+                  <br />
+                  You saw through the illusion. Watch X. Prepare.
+                  <br />
+                  <em className="text-gray-400">The real ones meet on the other side.</em>
                 </p>
+
 
                 {/* Join Telegram button */}
                 <a
@@ -405,7 +406,7 @@ export default function Home() {
         <div className="infoCard">
           <div className="hero">
             <Image
-              src="/trw.png"
+              src="/unplugged.jpg"
               alt="trw"
               width={200}
               height={200}
@@ -417,7 +418,7 @@ export default function Home() {
               animate={{ opacity: 1, y: 0 }}
               transition={{ duration: 0.8 }}
             >
-              JOIN THE REAL WORLD
+              UNPLUG FROM THE MATRIX
             </motion.h1>
 
             <motion.p
@@ -447,7 +448,7 @@ export default function Home() {
 
             </motion.p>
           </div>
-          <CountdownTimer />
+          {/* <CountdownTimer /> */}
           <div className="form-group">
             <input
               type="text"
