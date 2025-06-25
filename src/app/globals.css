@@ -408,6 +408,8 @@ body {
   box-shadow: #ff000056 0 2px 15px;
   border-radius: 15px !important;
   margin: 20px 0;
+  pointer-events: auto !important;
+  z-index: 1000;
 }
 
 .airdropTitle {
@@ -466,7 +468,7 @@ body {
   border: 2px solid #00ff2a ;
   cursor: pointer;
   width: 80%;
-
+  touch-action: manipulation;
 }
 
 .toolBox {
