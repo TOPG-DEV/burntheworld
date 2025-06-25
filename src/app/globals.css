@@ -69,7 +69,7 @@ body {
   font-size: x-large;
   text-transform: uppercase;
   font-weight: 700;
-  border-bottom: 2px solid #ff6467;
+  border-bottom: 2px solid #1e4465;
   width: 100%;
   margin: 8px 0px;
 }
@@ -324,5 +324,210 @@ body {
 
 .link {
   display: flex;
+}
 
+.background {
+  position: relative;
+  background-color: #0d1a2569;
+  backdrop-filter: blur(8px);
+  padding: 20px;
+  height: 100%;
+  width: 100%;
+}
+
+.dashInfoCard {
+  /* display: flex; */
+  font-family: system-ui, 'Segoe UI', 'Open Sans', 'Helvetica Neue', sans-serif;
+  flex-direction: column;
+  justify-content: space-between;
+  align-items: center;
+  background-color: #060e156e;
+  border: 1px solid #1e4465 !important;
+  padding: 20px !important;
+  border-radius: 15px !important;
+  color: white;
+  z-index: 10;
+  backdrop-filter: blur(8px);
+  margin-top: 32px;
+  width: 100%;
+}
+
+.infoRow {
+  display: flex;
+  flex-direction: row;
+  justify-content: space-between;
+  gap: 10;
+  width: 100%;
+}
+
+.infoGrid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(100px, 1fr));
+  grid-gap: 10px;
+  width: 100%;
+}
+
+.btnColumn {
+  display: flex;
+  flex-direction: column;
+  width: 100%;
+  margin-top: 32px;
+}
+
+.dashBtn {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  padding: 5px;
+  background-color: #1e4465;
+  margin: 5px;
+  border: 1px solid #3ca9ff;
+  border-radius: 8px;
+  cursor: pointer;
+}
+
+.dashBtn button {
+  cursor: pointer;
+}
+
+.leaderBtn {
+  border: 1px solid #7bff91;
+  background-color: #7bff9144;
+}
+
+.airdropBtnHolder {
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+  width: 100%;
+  gap: 10px;
+  background-color: #060e15;
+  /* border: 1px solid #1e4465 !important; */
+  border: 1px solid #ff0000 !important;
+  box-shadow: #ff000056 0 2px 15px;
+  border-radius: 15px !important;
+  margin: 20px 0;
+}
+
+.airdropTitle {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  text-align: center;
+  font-family: sans-serif;
+  font-weight: 600;
+  text-transform: uppercase;
+  color: #7fd0ff;
+  border-bottom: 1px solid #1e4465;
+  background-color: #27374572;
+  margin-bottom: 10px;
+  width: 100%;
+  height: 100%;
+  border-radius: 15px 15px 0px 0px;
+  padding: 10px;
+}
+
+.airdropDescription {
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+  font-size: small;
+  text-align: center;
+  color: #ffffff;
+  margin: 10px 15px;
+}
+
+.airdropMessage {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  text-align: center;
+  font-size: x-small;
+  color: #a0a0a0;
+  margin: 10px 15px;
+}
+
+.airdropBtn {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  padding: 15px;
+  color: black;
+  font-weight: 600;
+  text-shadow: #000 0 1px 1px;
+  text-transform: uppercase;
+  background-color: #7bff91;
+  margin: 15px;
+  border: 1px solid #7bff91;
+  box-shadow: #48ff66 0 2px 15px;
+  border-radius: 8px;
+  border: 2px solid #00ff2a ;
+  cursor: pointer;
+  width: 80%;
+
+}
+
+.toolBox {
+  display: flex;
+  font-family: system-ui, 'Segoe UI', 'Open Sans', 'Helvetica Neue', sans-serif;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+  font-size: small;
+  background-color: #060e156e;
+  border: 1px solid #1e4465 !important;
+  /* padding: 20px !important; */
+  border-radius: 15px !important;
+  color: white;
+  z-index: 10;
+  backdrop-filter: blur(8px);
+}
+
+.toolTitle {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  text-align: center;
+  font-family: sans-serif;
+  text-transform: uppercase;
+  color: #7fd0ff;
+  border-bottom: 1px solid #1e4465;
+  background-color: #27374572;
+  margin-bottom: 10px;
+  width: 100%;
+  height: 100%;
+  border-radius: 15px 15px 15px 0px;
+  padding: 10px;
+}
+
+.toolDescription {
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+  font-size: small;
+  color: #575757;
+  margin: 10px 0;
+}
+
+.infoRow .toolTitle {
+  font-size: medium;
+  color: #7fd0ff;
+  text-transform: uppercase;
+  font-weight: 600;
+  background-color: #00000000;
+  border-bottom: 1px solid #1e4465;
+  border-radius: 0px;
+  height: 80px;
+}
+
+.topGTokens {
+  font-weight: 800;
+  color: #7bff91;
+}
+
+.tokenImage {
+  border: 2px solid #651e1e;
 }

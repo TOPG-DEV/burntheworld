@@ -33,10 +33,11 @@ export const Providers: FC<ProvidersProps> = ({ children }) => {
 
   const wallets = useMemo(
     () => [
-      new PhantomWalletAdapter(),
+      new PhantomWalletAdapter({ network }),
       new SolflareWalletAdapter({ network }),
       new TorusWalletAdapter({ params: { network } }),
     ],
+    
     [network]
   );
 
