@@ -452,6 +452,7 @@ body {
 }
 
 .airdropBtn {
+  position: relative;
   display: flex;
   justify-content: center;
   align-items: center;
@@ -469,6 +470,7 @@ body {
   cursor: pointer;
   width: 80%;
   touch-action: manipulation;
+  z-index: 2000;
 }
 
 .toolBox {

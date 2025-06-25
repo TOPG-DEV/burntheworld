@@ -31,12 +31,15 @@ export default function DashboardPage() {
       setSolPrice(price);
       const usdAmount = parseFloat(process.env.NEXT_PUBLIC_PRESALE_USD_AMOUNT || "200");
       setSolAmount(usdAmount / price);
+      return price;  // RETURN THE PRICE
     } catch (e) {
       console.error("Failed to fetch SOL price:", e);
       setSolPrice(140);
-      setSolAmount(200 / 140); // fallback
+      setSolAmount(200 / 140);
+      return 140; // fallback price
     }
   };
+
 
   useEffect(() => {
     fetchSolPrice();
@@ -44,55 +47,68 @@ export default function DashboardPage() {
 
 
   const handleBuy = async () => {
-    if (!publicKey) {
-      setError("Connect your wallet first.");
-      return;
-    }
+  console.log("handleBuy called");
+  if (!publicKey) {
+    console.log("Wallet not connected");
+    setError("Connect your wallet first.");
+    return;
+  }
 
-    setSending(true);
-    setError(null);
+  setSending(true);
+  setError(null);
 
-    try {
-      // const tokenPriceUSD = 0.00001;
-      // const usdAmount = 200;
-      const usdAmount = parseFloat(process.env.NEXT_PUBLIC_PRESALE_USD_AMOUNT || "200");
-      const tokenPriceUSD = parseFloat(process.env.NEXT_PUBLIC_TOKEN_USD_PRICE || "0.00001");
+  try {
+    const usdAmount = parseFloat(process.env.NEXT_PUBLIC_PRESALE_USD_AMOUNT || "200");
+    const tokenPriceUSD = parseFloat(process.env.NEXT_PUBLIC_TOKEN_USD_PRICE || "0.00001");
 
-      const tokenAmountFixed = Math.floor(usdAmount / tokenPriceUSD);
-      const solPrice = await fetchSolPrice();
-      const solAmount = Number(usdAmount) / Number(solPrice); 
-      const lamports = Math.floor(solAmount * 1e9);          
+    const tokenAmountFixed = Math.floor(usdAmount / tokenPriceUSD);
+    console.log("Calculating price, tokenAmountFixed:", tokenAmountFixed);
 
-      const tx = new Transaction().add(
-        SystemProgram.transfer({
-          fromPubkey: publicKey,
-          toPubkey: RECEIVING_WALLET,
-          lamports,
-        })
-      );
+    const solPrice = await fetchSolPrice();
+    console.log("Fetched solPrice:", solPrice);
 
-      const sig = await sendTransaction(tx, connection);
-      await connection.confirmTransaction(sig, "processed");
-      setTxSig(sig);
+    // Note: fetchSolPrice currently doesn't return anything. That could be an issue.
+    // You need to modify fetchSolPrice to return the price for this to work.
 
-      // Optional: Save to Mongo via your API
-      await fetch("/api/presale-entry", {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({
-          wallet: publicKey.toBase58(),
-          amount: tokenAmountFixed,
-          tx: sig,
-          tier: "presale1", // helpful if you later offer different tiers
-        }),
-      });
+    const solAmount = Number(usdAmount) / Number(solPrice);
+    const lamports = Math.floor(solAmount * 1e9);
+    console.log("Calculated lamports:", lamports);
 
-    } catch (e: any) {
-      setError(e.message || "Transaction failed.");
-    } finally {
-      setSending(false);
-    }
-  };
+    const tx = new Transaction().add(
+      SystemProgram.transfer({
+        fromPubkey: publicKey,
+        toPubkey: RECEIVING_WALLET,
+        lamports,
+      })
+    );
+
+    const sig = await sendTransaction(tx, connection);
+    console.log("Transaction sent, sig:", sig);
+
+    await connection.confirmTransaction(sig, "processed");
+    setTxSig(sig);
+
+    // Save to Mongo
+    const res = await fetch("/api/presale-entry", {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({
+        wallet: publicKey.toBase58(),
+        amount: tokenAmountFixed,
+        tx: sig,
+        tier: "presale1",
+      }),
+    });
+    console.log("Saved to Mongo, response:", res.status);
+
+  } catch (e: any) {
+    console.log("Error in handleBuy:", e);
+    setError(e.message || "Transaction failed.");
+  } finally {
+    setSending(false);
+  }
+};
+
 
   useEffect(() => {
     const fetchUserInfo = async () => {
