@@ -19,19 +19,28 @@ export default function DashboardPage() {
   const [sending, setSending] = useState(false);
   const [error, setError] = useState<string | null>(null);
   const [txSig, setTxSig] = useState<string | null>(null);
+  const [solPrice, setSolPrice] = useState<number>(0);
+  const [solAmount, setSolAmount] = useState<number>(0);
 
   const RECEIVING_WALLET = useMemo(() => new PublicKey(process.env.NEXT_PUBLIC_TREASURY_WALLET!), []);
-  const fetchSolPrice = async (): Promise<number> => {
+  const fetchSolPrice = async () => {
     try {
       const res = await fetch("https://api.coingecko.com/api/v3/simple/price?ids=solana&vs_currencies=usd");
       const data = await res.json();
-      return data.solana.usd;
+      const price = data.solana.usd;
+      setSolPrice(price);
+      const usdAmount = parseFloat(process.env.NEXT_PUBLIC_PRESALE_USD_AMOUNT || "200");
+      setSolAmount(usdAmount / price);
     } catch (e) {
       console.error("Failed to fetch SOL price:", e);
-      return 140; // fallback
+      setSolPrice(140);
+      setSolAmount(200 / 140); // fallback
     }
   };
 
+  useEffect(() => {
+    fetchSolPrice();
+  }, []);
 
 
   const handleBuy = async () => {
@@ -49,10 +58,10 @@ export default function DashboardPage() {
       const usdAmount = parseFloat(process.env.NEXT_PUBLIC_PRESALE_USD_AMOUNT || "200");
       const tokenPriceUSD = parseFloat(process.env.NEXT_PUBLIC_TOKEN_USD_PRICE || "0.00001");
 
-      const tokenAmountFixed = Math.floor(usdAmount / tokenPriceUSD); // 2,000,000 tokens
+      const tokenAmountFixed = Math.floor(usdAmount / tokenPriceUSD);
       const solPrice = await fetchSolPrice();
-      const solAmount = usdAmount / solPrice;
-      const lamports = Math.floor(solAmount * 1e9);
+      const solAmount = Number(usdAmount) / Number(solPrice); 
+      const lamports = Math.floor(solAmount * 1e9);          
 
       const tx = new Transaction().add(
         SystemProgram.transfer({
@@ -89,9 +98,26 @@ export default function DashboardPage() {
     const fetchUserInfo = async () => {
       if (!publicKey) return;
 
+      const walletBase58 = publicKey.toBase58();
+      const recipientWallet = process.env.NEXT_PUBLIC_RECIPIENT_WALLET;
+
+      // ✅ Allow the recipient wallet to bypass verification
+      if (walletBase58 === recipientWallet) {
+        setUserInfo({
+          wallet: walletBase58,
+          telegram: "Recipient Wallet",
+          rank: "ADMIN",
+          topg: 0,
+          verified: true,
+        });
+        setStatusMessage("Full access granted.");
+        setLoading(false);
+        return;
+      }
+
       setLoading(true);
       try {
-        const res = await fetch(`/api/unplugged-info?wallet=${publicKey.toBase58()}`);
+        const res = await fetch(`/api/unplugged-info?wallet=${walletBase58}`);
         const data = await res.json();
 
         setUserInfo(data);
@@ -105,6 +131,7 @@ export default function DashboardPage() {
 
     fetchUserInfo();
   }, [publicKey]);
+
 
   if (loading)
     return (
@@ -216,7 +243,8 @@ export default function DashboardPage() {
               />
               <button className="airdropBtn" onClick={handleBuy}>Lock In</button>
               <p className="airdropMessage">
-                The future is yours.
+                The future is yours. <br />
+                Tier 1 Lock-In: {solAmount.toFixed(3)} SOL
               </p>
             </div>
 
