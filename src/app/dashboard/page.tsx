@@ -256,7 +256,7 @@ export default function DashboardPage() {
                 height={200}
                 className="trw tokenImage"
               />
-              <button className="airdropBtn" onClick={handleBuy}>Lock In</button>
+              <button className="airdropBtn" onClick={handleBuy}>{sending ? "Processing..." : "Lock In"}</button>
               <p className="airdropMessage">
                 The future is yours. <br />
                 Tier 1 Lock-In: {solAmount.toFixed(3)} SOL
