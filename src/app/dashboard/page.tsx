@@ -6,6 +6,7 @@ import MatrixRain from "@/components/ui/MatrixRain";
 import Link from "next/link";
 import Image from "next/image";
 import { Connection, PublicKey, Transaction, SystemProgram } from "@solana/web3.js";
+import CountdownTimer from "@/components/ui/CountdownTimer";
 
 const SOLANA_RPC = process.env.NEXT_PUBLIC_SOLANA_RPC_URL || "https://api.mainnet-beta.solana.com";
 
@@ -21,6 +22,7 @@ export default function DashboardPage() {
   const [txSig, setTxSig] = useState<string | null>(null);
   const [solPrice, setSolPrice] = useState<number>(0);
   const [solAmount, setSolAmount] = useState<number>(0);
+  const [tierClosedMessage, setTierClosedMessage] = useState(false);
 
   const RECEIVING_WALLET = useMemo(() => new PublicKey(process.env.NEXT_PUBLIC_TREASURY_WALLET!), []);
   const fetchSolPrice = async () => {
@@ -192,19 +194,10 @@ export default function DashboardPage() {
             <p>{userInfo.rank}</p>
           </div>
           <div className="infoRow">
-            <p><strong>TOPG Tokens:</strong></p>
-            <p>{Number(userInfo.topg).toLocaleString()}</p>
+            <p ><strong>TOPG Tokens:</strong></p>
+            <p className="topGTokens">{Number(userInfo.topg).toLocaleString()}</p>
           </div>
-          {/* <div className="infoRow">
-            <p><strong>Unplugged Since:</strong></p>
-            <p>{userInfo.date}</p>
-          </div> */}
-        </div>
-
-        <div className="infoRow">
-          <div className="dashInfoCard mt-8 bg-[#15212a72] border border-[#7bff91] p-4 text-center rounded-xl">
-            <p className="toolTitle">COMMUNITY</p>
-            <div className="btnColumn">
+          <div className="btnColumn">
             <Link href="/dashboard/leaderboard" className="dashBtn leaderBtn">
               <button>View Leaderboard</button>
             </Link>
@@ -216,80 +209,105 @@ export default function DashboardPage() {
               Refresh
             </button>  
           </div>
+          {/* <div className="infoRow">
+            <p><strong>Unplugged Since:</strong></p>
+            <p>{userInfo.date}</p>
+          </div> */}
+        </div>
+
+        <div className="infoRow">
+          <div className="dashInfoCard mt-8 bg-[#15212a72] border border-[#7bff91] p-4 text-center rounded-xl">
+            <p className="toolTitle">COMMUNITY</p>
             <p className="mt-2">
-              You are inside. You have Unplugged — now what?
+              Welcome to the Unplugged Dashboard
+            </p><br />
+            <p className="mt-2">
+              This portal provides insights and tools for active members of the community. 
+              It is designed to help you track your position, progress, and standing.
             </p>
             <p className="mt-2">
-              This portal holds tools that do not exist for the average man.
-              Power tools for the few who earned their way in.
-            </p>
-            <p className="mt-2">
-              Your rank. Your progress. Your window before the burn.
-            </p>
-            <p className="mt-2">
-              Loyalty means opportunity. Most will not see it until job is done.
+              You can monitor your rank, view leaderboard status, and prepare for upcoming phases.
             </p>
             <p className="mt-2 text-green-300 italic">
-              You are early. Do not waste that position.
+              You are early. Stay informed. Stay prepared.
             </p>
           </div>
         </div>
 
+        <div className="dashInfoCard">
+          <div className="title">UNPLUGGED ASSETS</div>
+          <div className="infoGrid">
+            <div className="toolBox">
+              <p className="toolTitle inProgress">Bots</p>
+              <p className="toolDescription">In Progress</p>
+            </div>
+            <div className="toolBox">
+              <p className="toolTitle">Whale Watcher</p>
+              <p className="toolDescription">Coming Soon</p>
+            </div>
+            <div className="toolBox"> 
+              <p className="toolTitle">AI Hustle Tools</p>
+              <p className="toolDescription">Coming Soon</p>
+            </div>
+            <div className="toolBox"> 
+              <p className="toolTitle">Whale Chat</p>
+              <p className="toolDescription">Coming Soon </p>
+            </div>
+          </div>
+        </div>
+
+
          <div className="airdropBtnHolder">
-              <div className="airdropTitle">Unplugged ICO <br /> TIER 1</div>
-              <p className="airdropDescription">
-                This is Tier 1. The door is open.
-                The price will rise, and it will not be subtle.
-                Some will lock in early and never look back.
-                Others will watch everything burn and realize they should have taken action.
-                <br /><br />
-                We have capped each buy-in — not for fairness, but to keep weak hands out.
-                This is not a charity. It is a test.
-                <br /><br />
-                Locking in now proves you're serious. Take action, be unplugged, and make a statement.
-                The loyal have the fuel.
-              </p>
-              <Image
+              <div className="airdropTitle">Unplugged ICO <br /> TIER 1 <br /> </div>
+              <CountdownTimer onComplete={() => setTierClosedMessage(true)}/>
+                <Image
                 src="/unplugged.jpg"
                 alt="unplugged"
                 width={200}
                 height={200}
                 className="trw tokenImage"
               />
-              <button className="airdropBtn" onClick={handleBuy}>{sending ? "Processing..." : "Lock In"}</button>
+              {!tierClosedMessage ? (
+                <p className="airdropDescription">
+                  The door is open.
+                  The price will rise, and it will not be subtle.
+                  Some will lock in early and never look back.
+                  <br /><br />
+                  This is your chance to lock in at the lowest price.
+                  <br /><br />
+                  Locking in proves you are serious. Take action, be unplugged, and make a statement.
+                </p>
+              ) : (
+                <p className="airdropDescription">
+                  Tier 1 has officially closed.
+                  <br />
+                  <strong>Thank you for your early support.</strong> <br />
+                  Congratulations to those who secured their position early — your commitment has been noted. <br />
+                  Details regarding the next phase will be announced at an undisclosed time. <br />
+                  Stay prepared. Opportunities will not be announced twice.
+                </p>
+              )}
+              
+              <button 
+                className="airdropBtn" 
+                onClick={handleBuy}
+                disabled={tierClosedMessage || sending}
+              >
+                {sending ? "Processing..." : tierClosedMessage ? "Tier Closed" : "Lock In"}
+              </button>
               <p className="airdropMessage">
                 The future is yours. <br />
                 Tier 1 Lock-In: {solAmount.toFixed(3)} SOL
               </p>
             </div>
 
-        <div className="dashInfoCard">
-          <div className="title">UNPLUGGED ASSETS</div>
-          <div className="infoGrid">
-            <div className="toolBox"> 
-              <p className="toolTitle">Whale Chat</p>
-              <p className="toolDescription">Coming Soon </p>
-            </div>
-            <div className="toolBox"> 
-              <p className="toolTitle">AI Hustle Tools</p>
-              <p className="toolDescription">Coming Soon</p>
-            </div>
-            <div className="toolBox">
-              <p className="toolTitle">Bots</p>
-              <p className="toolDescription">Coming Soon</p>
-            </div>
-            <div className="toolBox">
-              <p className="toolTitle">Whale Watcher</p>
-              <p className="toolDescription">Coming Soon</p>
-            </div>
-          </div>
-        </div>
+        
+
         <p className="text-[10px] text-gray-500 italic text-center mt-4">
           This is for community engagement and experimentation. This is not financial advice. Participation is voluntary. No expectations of profit are promised or implied.
           <br />
           Participation in this token does not constitute an investment contract, and all tokens are utility-based for community access and features. No monetary return is expected or guaranteed.
         </p>
-
 
       </div>
     </div>

@@ -15,8 +15,8 @@ function nonlinearNormalize(value: number, max: number): number {
 function determineTitle(score: number): string {
   if (score >= 9000) return "TOPG";
   if (score >= 7100) return "UNPLUGGED G";
-  if (score >= 4100) return "Matrix Hacker G";
-  if (score >= 2100) return "Red Pill G";
+  if (score >= 4100) return "Matrix Hacker";
+  if (score >= 2100) return "Red Pilled";
   return "G";
 }
 

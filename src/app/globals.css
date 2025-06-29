@@ -285,7 +285,7 @@ body {
 
 .global-timer {
   font-size: large;
-  color: #ffcc00;
+  color: #7bff91;
   text-align: center;
   margin: 5px;
   padding: 0px 20px;
@@ -403,9 +403,9 @@ body {
   width: 100%;
   gap: 10px;
   background-color: #060e15;
-  /* border: 1px solid #1e4465 !important; */
-  border: 1px solid #ff0000 !important;
-  box-shadow: #ff000056 0 2px 15px;
+  border: 1px solid #7bff91 !important;
+  /* border: 1px solid #ff0000 !important; */
+  box-shadow: #7bff9156 0 2px 15px;
   border-radius: 15px !important;
   margin: 20px 0;
   pointer-events: auto !important;
@@ -473,6 +473,11 @@ body {
   z-index: 2000;
 }
 
+.airdropBtn:hover {
+  background-color: #7bff91c6;
+  box-shadow: #7bff91c6 0 2px 15px;
+}
+
 .toolBox {
   display: flex;
   font-family: system-ui, 'Segoe UI', 'Open Sans', 'Helvetica Neue', sans-serif;
@@ -487,6 +492,10 @@ body {
   color: white;
   z-index: 10;
   backdrop-filter: blur(8px);
+}
+
+.toolBox .inProgress {
+  border: 1px solid #7bff91a5;
 }
 
 .toolTitle {
@@ -533,5 +542,5 @@ body {
 }
 
 .tokenImage {
-  border: 2px solid #651e1e;
+  border: 2px solid #7bff91;
 }

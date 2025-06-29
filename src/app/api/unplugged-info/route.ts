@@ -51,8 +51,8 @@ async function getTopgBalance(walletAddress: string): Promise<number> {
 function determineTitle(score: number): string {
   if (score >= 9000) return "TOPG";
   if (score >= 7100) return "UNPLUGGED G";
-  if (score >= 4100) return "Matrix Hacker G";
-  if (score >= 2100) return "Red Pill G";
+  if (score >= 4100) return "Matrix Hacker";
+  if (score >= 2100) return "Red Pilled";
   return "G";
 }
 
@@ -166,7 +166,7 @@ export async function GET(req: Request) {
       totalPaid: totalSolPaid,
       engagement: telegramEngagement,
       date: user.createdAt || new Date(),
-      message: "You’re verified — Welcome UNPLUGGED.",
+      message: "Welcome UNPLUGGED",
     });
   } catch (error) {
     console.error("Verification error:", error);

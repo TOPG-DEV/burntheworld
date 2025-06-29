@@ -5,7 +5,7 @@ interface CountdownProps {
 }
 
 export default function CountdownToFixedEastern({ onComplete }: CountdownProps): JSX.Element {
-  const targetTimestamp = Date.UTC(2025, 5, 16, 15, 30, 0); // 11AM AST (2PM ET)
+  const targetTimestamp = Date.UTC(2025, 5, 29, 22, 30, 0); // 11AM AST (2PM ET)
 
   const [timeLeft, setTimeLeft] = useState<number>(targetTimestamp - Date.now());
 
@@ -26,8 +26,8 @@ export default function CountdownToFixedEastern({ onComplete }: CountdownProps):
 
   if (timeLeft <= 0) {
     return (
-      <p className="text-red-400 mt-4 text-center text-xl font-mono">
-        BURN COMING SOON
+      <p className="global-timer">
+        CLOSED
       </p>
     );
   }

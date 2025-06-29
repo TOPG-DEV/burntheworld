@@ -710,7 +710,7 @@ export default function Home() {
                 <br />
               </p>
 
-              <CountdownTimer onComplete={() => setShowFinalMessage(true)} />
+              {/* <CountdownTimer onComplete={() => setShowFinalMessage(true)} /> */}
 
               <br />
               <p className="text-gray-300 text-center mt-2 px-4">
