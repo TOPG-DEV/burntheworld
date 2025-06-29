@@ -873,8 +873,19 @@ export default function Home() {
             </button>
           </div>
 
+          <br /><br />
+
+          <p className="text-[10px] text-gray-500 italic text-center mt-4">
+            This is for community engagement and experimentation. This is not financial advice. Participation is voluntary. No expectations of profit are promised or implied.
+            <br />
+            Participation in this token does not constitute an investment contract, and all tokens are utility-based for community access and features. No monetary return is expected or guaranteed.By connecting your wallet and participating, you acknowledge that you understand and accept the terms outlined above.
+          </p>
+          
+
           {error && <p className="mt-4 text-red-500">{error}</p>}
         </div>
+        
+        
       )}
     </main>
   );
