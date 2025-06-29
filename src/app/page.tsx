@@ -600,12 +600,10 @@ export default function Home() {
                 <br />
                 You chose the pill. You stayed awake.
                 <br />
-                <strong className="text-red-400">The airdrop is coming. The burn will follow.</strong>
-                <br />
                 <br />
                 Let the NPCs scroll and sell. Stay focused.
                 <br />
-                You saw through the illusion. Watch X. Prepare.
+                You saw through the illusion. Prepare.
                 <br />
                 <em className="text-gray-400">The real ones meet on the other side.</em>
               </p>
